@@ -2,7 +2,7 @@
 let allProduct = []; // tableau vide pour y "stocker" les différents produits
 const getProducts = async () => { // fonction fetch pour appeller une url back en paramètre pour récupérer information
     await fetch("http://localhost:3000/api/products/") // url d'où sont appelées les données (product.js)
-    .then((res) => res.json()) // début promesse chaînée
+    .then((response) => response.json()) // début promesse chaînée
     .then((data) => allProduct = data)
     .catch((error) => console.log(error)); // fin promesse chaînée
 };
@@ -17,8 +17,9 @@ const displayKanap = async () => {
         console.log(product.name); // ici en affichant le console.log
         
         const link = document.createElement("a");
-        link.setAttribute("href", product._id);
         document.getElementById("items").appendChild(link);
+        link.setAttribute("href", "./product.html?id=" + product._id);
+        console.log(link);
 
         const article = document.createElement("article");
         document.getElementById("items").appendChild(article);
@@ -42,9 +43,12 @@ const displayKanap = async () => {
         document.getElementById("items").appendChild(image);
         article.prepend(image); // image devient l'enfant de article
 
+        
+
     });
 }
 displayKanap();
 
 // chercher la partie create.element
 // Recréer l'arborescence html en javascript
+
