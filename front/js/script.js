@@ -7,7 +7,6 @@ const getProducts = async () => { // fonction fetch pour appeller une url back e
     .catch((error) => console.log(error)); // fin promesse chaînée
 };
 
-
 const displayKanap = async () => {
     await getProducts();
     console.log(allProduct);
@@ -42,9 +41,6 @@ const displayKanap = async () => {
         image.setAttribute("alt", product.altTxt);
         document.getElementById("items").appendChild(image);
         article.prepend(image); // image devient l'enfant de article
-
-        
-
     });
 }
 displayKanap();

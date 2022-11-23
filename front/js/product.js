@@ -5,18 +5,15 @@ console.log(id);
 
 // Call API per product ID
 fetch(`http://localhost:3000/api/products/${id}`) // on récupère l'id via searchparams (ligne 3 & 4)
-        .then(function (response) {
-            return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => displayProductDetails(data))
-        .catch((error) => {
-            console.log(error)
-        });
+        .catch((error) => console.log(error)); // fin promesse chaînée
 
 // Function showing product details
 function displayProductDetails(product) {
     console.log(product);
 
+    
     const productImg = document.createElement("img"); // création de la balise img
     productImg.setAttribute("src", product.imageUrl); // implémentation attribut source de l'img
     productImg.setAttribute("alt", product.altTxt); // implémentation attribut alt de l'img
@@ -36,36 +33,54 @@ function displayProductDetails(product) {
         let option = document.createElement("option");
         option.innerText = product.colors[i];
         productColor.appendChild(option);
+        
     }
-
-    const addToCartBtn = document.querySelector("#addToCart");
-    const productNumber = document.querySelector("#itemQuantity");
-
-    addToCartBtn.addEventListener("click", () => { 
-        // on écoute l'évènement au niveau du click de la souris
-        if (productNumber > 0 && productNumber <= 100) { 
-            // si nbr de produit |e| 1 & 100 uniquement !
-            let addProduct = { // Ajout du produit au panier
-                name: productName.innerHTML,
-                price: parseFloat(productPrice.innerHTML),
-                quantity: parseFloat(document.querySelector("#itemQuantity").value),
-                _id: id,
-            };
-            let ProductCartArray = [];  // Tableau pour le localStorage
-            if (localStorage.getItem("products") !== null) { // on récupère "products.json"
-                ProductCartArray = JSON.parse(localStorage.getItem("products"));
-            }
-            ProductCartArray.push(addProduct);
-            localStorage.setItem("products", JSON.stringify(ProductCartArray));
-            console.log(ProductCartArray);
-            textConfirmation.innerHTML = `Vous avez ajouté ${productNumber} Canapé à votre panier !`;
-            
-        }
-    });
 };
 
+    const addToCartBtn = document.querySelector("#addToCart");
 
+    addToCartBtn.addEventListener("click", (event) => { 
 
+        let productFinalCart = [];
+        console.log(productFinalCart);
+
+        const productName = document.querySelector("#title").value;
+        const productPrice = document.querySelector("#price").value;
+        const productNumber = document.getElementById("quantity").value;
+        const productColor = document.getElementById("colors").value;
+        let productCart = {
+            id: id,
+            name: productName,
+            price: parseInt(productPrice),
+            quantity: parseInt(productNumber, 10),
+            colors: productColor,
+        }
+        
+        if (localStorage.getItem("products")){
+            productFinalCart = JSON.parse(localStorage.getItem("products"));
+            for (let i = 0; i < productFinalCart.length; i += 1){
+                
+                if ( // on vérifie l'id et la couleur pour modifier la quantité
+                    productCart.id == productFinalCart[i].id &&
+                    productCart.color == productFinalCart[i].color
+                ){
+/* Maj de la quantité */  productFinalCart[i].quantity = productCart.quantity + productFinalCart[i].quantity;
+/* Quantité < 100 */    if (productFinalCart[i].quantity > 100) { 
+                        productFinalCart[i].quantity = 100;
+                        alert('Erreur, trop de produit en commande !');
+                    }
+                    localStorage.setItem("products", JSON.stringify(productFinalCart));
+                    return; // on marque la fin de la fonction pour ne jouer que la ligne 75 & 76
+                    // pour ne pas faire un push
+                }
+            };
+            productFinalCart.push(productCart);  // cas où le produit n'est pas dans le panier
+            localStorage.setItem("products", JSON.stringify(productFinalCart));
+        } else {
+            productFinalCart.push(productCart); // cas où Aucune variable dans le localStorage
+            localStorage.setItem("products", JSON.stringify(productFinalCart));
+        }
+    });
 
 
 
