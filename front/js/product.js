@@ -39,7 +39,7 @@ function displayProductDetails(product) {
 
     const addToCartBtn = document.querySelector("#addToCart");
 
-    addToCartBtn.addEventListener("click", (event) => { 
+    addToCartBtn.addEventListener("click", () => { 
 
         let productFinalCart = [];
         console.log(productFinalCart);
@@ -50,8 +50,8 @@ function displayProductDetails(product) {
         const productColor = document.getElementById("colors").value;
         let productCart = {
             id: id,
-            name: productName,
-            price: parseInt(productPrice),
+            name: product.name,
+            price: parseInt(product.price),
             quantity: parseInt(productNumber, 10),
             colors: productColor,
         }
