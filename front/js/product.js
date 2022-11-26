@@ -1,19 +1,19 @@
 
 let parametres = new URL(document.location).searchParams;
 let id = parametres.get("id");
-console.log(id);
-
+let product;
 // Call API per product ID
-fetch(`http://localhost:3000/api/products/${id}`) // on récupère l'id via searchparams (ligne 3 & 4)
+const fetchProduct = async () => {
+    await fetch(`http://localhost:3000/api/products/${id}`) // on récupère l'id via searchparams (ligne 3 & 4)
         .then((response) => response.json())
-        .then((data) => displayProductDetails(data))
+        .then((data) => product = data)
         .catch((error) => console.log(error)); // fin promesse chaînée
-
+}
 // Function showing product details
-function displayProductDetails(product) {
+const displayProductDetails = async () => {
+    await fetchProduct();
     console.log(product);
 
-    
     const productImg = document.createElement("img"); // création de la balise img
     productImg.setAttribute("src", product.imageUrl); // implémentation attribut source de l'img
     productImg.setAttribute("alt", product.altTxt); // implémentation attribut alt de l'img
@@ -33,21 +33,22 @@ function displayProductDetails(product) {
         let option = document.createElement("option");
         option.innerText = product.colors[i];
         productColor.appendChild(option);
-        
     }
 };
-
+    displayProductDetails();
     const addToCartBtn = document.querySelector("#addToCart");
-
     addToCartBtn.addEventListener("click", () => { 
 
         let productFinalCart = [];
-        console.log(productFinalCart);
 
-        const productName = document.querySelector("#title").value;
-        const productPrice = document.querySelector("#price").value;
         const productNumber = document.getElementById("quantity").value;
         const productColor = document.getElementById("colors").value;
+        console.log(productNumber);
+        console.log(productColor);
+        if (productNumber === "0" || productColor === ""){
+            alert("Veuillez préciser la couleur et le nombre d'objets");
+            return;
+        }
         let productCart = {
             id: id,
             name: product.name,
@@ -55,19 +56,19 @@ function displayProductDetails(product) {
             quantity: parseInt(productNumber, 10),
             colors: productColor,
         }
-        
+        console.log(productCart);
         if (localStorage.getItem("products")){
             productFinalCart = JSON.parse(localStorage.getItem("products"));
             for (let i = 0; i < productFinalCart.length; i += 1){
-                
                 if ( // on vérifie l'id et la couleur pour modifier la quantité
                     productCart.id == productFinalCart[i].id &&
-                    productCart.color == productFinalCart[i].color
+                    productCart.colors == productFinalCart[i].colors
                 ){
 /* Maj de la quantité */  productFinalCart[i].quantity = productCart.quantity + productFinalCart[i].quantity;
 /* Quantité < 100 */    if (productFinalCart[i].quantity > 100) { 
                         productFinalCart[i].quantity = 100;
                         alert('Erreur, trop de produit en commande !');
+                        return;
                     }
                     localStorage.setItem("products", JSON.stringify(productFinalCart));
                     return; // on marque la fin de la fonction pour ne jouer que la ligne 75 & 76
@@ -77,8 +78,13 @@ function displayProductDetails(product) {
             productFinalCart.push(productCart);  // cas où le produit n'est pas dans le panier
             localStorage.setItem("products", JSON.stringify(productFinalCart));
         } else {
+            if (productCart.quantity > 100) {
+                alert('Erreur, trop de produit en commande !');
+                return;
+            }
             productFinalCart.push(productCart); // cas où Aucune variable dans le localStorage
             localStorage.setItem("products", JSON.stringify(productFinalCart));
+            console.log(productFinalCart);
         }
     });
 
