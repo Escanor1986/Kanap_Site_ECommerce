@@ -55,6 +55,8 @@ const displayProductDetails = async () => {
             price: parseInt(product.price),
             quantity: parseInt(productNumber, 10),
             colors: productColor,
+            imageUrl: product.imageUrl,
+            description: product.description,
         }
         console.log(productCart);
         if (localStorage.getItem("products")){
