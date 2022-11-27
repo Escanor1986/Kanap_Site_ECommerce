@@ -8,8 +8,6 @@ let productFinalCart = localStorage.getItem("products");
 let productCart = JSON.parse(productFinalCart);
 
 productCart.map((product) => {
-    console.log(product.name);
-    console.log(productCart);
 
     const article = document.createElement("article");
     document.getElementById("cart__items").appendChild(article);
@@ -89,7 +87,49 @@ productCart.map((product) => {
     image.setAttribute("alt", product.description);
     document.getElementById("cart__items").appendChild(image);
     cartItemImg.prepend(image);
+
+    let totalQuantityCart = (productCart[0].quantity + productCart[1].quantity);
+
+    const totalQuantity = document.querySelector("#totalQuantity");
+    totalQuantity.innerHTML = totalQuantityCart;
+    
+    const totalPrice = document.querySelector("#totalPrice");
+    totalPrice.innerHTML = (product.price * totalQuantityCart);
+
+
+    console.log(totalQuantityCart);
+    console.log(totalPrice);
+    console.log(productCart);
+    console.log(product);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Stockage dans le local storage
 
