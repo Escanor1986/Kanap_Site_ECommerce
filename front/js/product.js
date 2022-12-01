@@ -34,6 +34,7 @@ const displayProductDetails = async () => {
     productColor.appendChild(option);
   }
 };
+
 displayProductDetails();
 const addToCartBtn = document.querySelector("#addToCart");
 addToCartBtn.addEventListener("click", () => {
