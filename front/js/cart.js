@@ -67,9 +67,9 @@ function totalQuantity() {
 
 function changeQuantity() {
   let quantityChange = document.querySelectorAll(".itemQuantity");
-// on crée une boucle pour parcourir le nombre d'objet afficher à l'écran
+  // on crée une boucle pour parcourir le nombre d'objet afficher à l'écran
   for (let k = 0; k < quantityChange.length; k += 1) {
-    quantityChange[k].addEventListener("change", (event) => { 
+    quantityChange[k].addEventListener("change", (event) => {
       // On écoute l'évènement en suivant l'augmentation/diminution des nombres dans l'input quantity
       event.preventDefault();
       //Selection de l'element à modifier en fonction de son id & de sa couleur
@@ -77,13 +77,13 @@ function changeQuantity() {
       let quantityModifValue = quantityChange[k].valueAsNumber;
       const resultFind = productCart.find(
         // La méthode find() renvoie la valeur du premier élément trouvé
-        //  dans le tableau qui respecte la condition donnée par la 
+        //  dans le tableau qui respecte la condition donnée par la
         // fonction de test passée en argument. Sinon, la valeur undefined est renvoyée.
         (el) => el.quantityChangeValue !== quantityModif
       );
       resultFind.quantity = quantityModifValue;
       productCart[k].quantity = resultFind.quantity;
-          // envoyer les nouvelles données dans le localStorage
+      // envoyer les nouvelles données dans le localStorage
       localStorage.setItem("products", JSON.stringify(productCart));
       // refresh rapide de la page
       location.reload();
@@ -92,7 +92,7 @@ function changeQuantity() {
 }
 changeQuantity();
 
-for (let l = 0; l < productCart.length; l += 1) { 
+for (let l = 0; l < productCart.length; l += 1) {
   let deleteProduct = document.querySelector(".deleteItem");
   deleteProduct.addEventListener("click", (e) => {
     e.preventDefault;
@@ -149,7 +149,8 @@ function getForm() {
 
   const validFirstName = function (inputFirstName) {
     let firstNameErrorMsg = inputFirstName.nextElementSibling; // cible l'élément suivant (cfr DOM)
-    if (charRegExp.test(inputFirstName.value)) { // On test la valeur de l'input pour voir si elle est conforme au regexp
+    if (charRegExp.test(inputFirstName.value)) {
+      // On test la valeur de l'input pour voir si elle est conforme au regexp
       // si l'input est conforme au regexp, alors...
       firstNameErrorMsg.innerHTML = "";
     } else {
@@ -200,7 +201,7 @@ function postForm() {
     // La méthode preventDefault(), rattachée à l'interface Event, indique à l'agent utilisateur
     // que si l'évènement n'est pas explicitement géré,
     // l'action par défaut ne devrait pas être exécutée comme elle l'est normalement.
-    // L'évènement continue sa propagation habituelle à moins qu'un des gestionnaires d'évènement 
+    // L'évènement continue sa propagation habituelle à moins qu'un des gestionnaires d'évènement
     // invoque stopPropagation() ou stopImmediatePropagation() pour interrompre la propagation.
 
     const contact = {
