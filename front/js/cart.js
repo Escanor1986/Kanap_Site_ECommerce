@@ -1,18 +1,17 @@
-for (let i = 0; i < localStorage.length; i++) {
+/*for (let i = 0; i < localStorage.length; i++) {
   localStorage.key(i);
-}
+}*/
 console.log(localStorage);
 
 let productCart = JSON.parse(localStorage.getItem("products"));
 
 let cartContent = document.getElementById("cart__items");
-let cartContentInstanciated;
+let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
 function setCartcontent() {
   productCart.map((product) => {
     cartContentInstanciated =
       cartContentInstanciated +
-      `
-  <article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
+      `<article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
     <div class="cart__item__img">
       <img src="${product.imageUrl}" alt="${product.altTxt}">
     </div>
@@ -25,10 +24,10 @@ function setCartcontent() {
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
           <p>Qté : </p>
-          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.quantity}">
         </div>
         <div class="cart__item__content__settings__delete">
-          <p class="deleteItem">Supprimer</p>
+          <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
         </div>
       </div>
     </div>
@@ -40,98 +39,89 @@ function setCartcontent() {
 setCartcontent();
 
 let totalPriceValue = document.querySelector("#totalPrice");
-totalPriceValue.innerHTML = totalPrice();
+let totalQuantityCart = document.querySelector("#totalQuantity");
 
 function totalPrice() {
   let sum = 0;
   let productCart = JSON.parse(localStorage.getItem("products"));
   for (let i = 0; i < productCart.length; i += 1) {
-    console.log(productCart);
-    sum = sum + productCart[i].quantity * productCart[i].price;
+    // console.log(productCart);
+    sum =
+      sum + parseInt(productCart[i].quantity) * parseInt(productCart[i].price);
   }
-  return sum;
+  totalPriceValue.innerHTML = sum;
 }
-
-let totalQuantityCart = document.querySelector("#totalQuantity");
-totalQuantityCart.innerHTML = totalQuantity();
 
 function totalQuantity() {
   let sum = 0;
   let productCart = JSON.parse(localStorage.getItem("products"));
   for (let j = 0; j < productCart.length; j += 1) {
-    console.log(productCart);
-    sum = sum + productCart[j].quantity;
+    // console.log(productCart);
+    sum = sum + parseInt(productCart[j].quantity);
   }
-  return sum;
+  totalQuantityCart.innerHTML = sum;
 }
 
 function changeQuantity() {
-  let quantityChange = document.querySelectorAll(".itemQuantity");
-  // on crée une boucle pour parcourir le nombre d'objet afficher à l'écran
-  for (let k = 0; k < quantityChange.length; k += 1) {
-    quantityChange[k].addEventListener("change", (event) => {
-      // On écoute l'évènement en suivant l'augmentation/diminution des nombres dans l'input quantity
-      event.preventDefault();
-      //Selection de l'element à modifier en fonction de son id & de sa couleur
-      let quantityModif = productCart[k].quantity;
-      let quantityModifValue = quantityChange[k].valueAsNumber;
-      const resultFind = productCart.find(
-        // La méthode find() renvoie la valeur du premier élément trouvé
-        //  dans le tableau qui respecte la condition donnée par la
-        // fonction de test passée en argument. Sinon, la valeur undefined est renvoyée.
-        (el) => el.quantityChangeValue !== quantityModif
-      );
-      resultFind.quantity = quantityModifValue;
-      productCart[k].quantity = resultFind.quantity;
-      // envoyer les nouvelles données dans le localStorage
-      localStorage.setItem("products", JSON.stringify(productCart));
-      // refresh rapide de la page
-      location.reload();
+  document.querySelectorAll(".itemQuantity").forEach((change) => {
+    change.addEventListener("change", (event) => {
+      // eventlistener reprend les caractéristiques de la balise html ciblée
+      for (k = 0; k < productCart.length; k += 1) {
+        if (
+          productCart[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
+          productCart[k].colors === event.target.dataset.color
+        ) {
+          productCart[k].quantity = event.target.value;
+          localStorage.setItem("products", JSON.stringify(productCart));
+          totalQuantity();
+          totalPrice();
+          // location.reload();
+          console.log(productCart);
+        }
+      }
     });
-  }
+  });
 }
 changeQuantity();
 
-for (let l = 0; l < productCart.length; l += 1) {
-  let deleteProduct = document.querySelector(".deleteItem");
-  deleteProduct.addEventListener("click", (e) => {
-    e.preventDefault;
-    // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
-    let deleteId = productCart[l].id;
-    let deleteColor = productCart[l].colors;
-    // filtrer l'élément cliqué par le bouton supprimer
-    productCart = productCart.filter(
-      (elt) => elt.id !== deleteId || elt.colors !== deleteColor
-    );
-    // envoyer les nouvelles données dans le localStorage avec setItem
-    localStorage.setItem("products", JSON.stringify(productCart));
-    // avertir de la suppression et recharger la page
-    alert("Votre article a bien été supprimé ! Merci.");
-    //Si pas de produits dans le local storage on affiche que le panier est vide
-    if (productCart.length === 0) {
-      localStorage.clear();
-    }
-    //Refresh rapide de la page
-    location.reload();
+function deleteCartProduct() {
+  document.querySelectorAll(".deleteItem").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      for (l = 0; productCart.length; l += 1) {
+        if (
+          productCart[l].id === e.target.dataset.id &&
+          productCart[l].colors === e.target.dataset.color
+        ) {
+          productCart.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
+          localStorage.setItem("products", JSON.stringify(productCart));
+          alert("Votre article a bien été supprimé ! Merci.");
+          // setCartcontent();
+          location.reload();
+          if (productCart.length === 0) {
+            localStorage.clear();
+          }
+        }
+      }
+    });
   });
 }
+deleteCartProduct();
 
 //formulaire avec regex
 function getForm() {
-  // Ajout des Regex
-  let form = document.querySelector(".cart__order__form");
+  let form = document.querySelector(".cart__order__form"); // Ajout des Regex dans le but d'effectuer les test de contenu du formulaire
 
-  //Création des expressions régulières
-  let emailRegExp = new RegExp(
-    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$" // Caractères autorisés dans le champ de saisie
+  let emailRegExp = new RegExp( //Création des expressions régulières
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$" // Caractères email autorisés dans le champ de saisie
   );
   let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$"); // Caractères autorisés dans le champ de saisie
   let addressRegExp = new RegExp(
-    "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+" // Caractères autorisés dans le champ de saisie
+    "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+" // Caractères address autorisés dans le champ de saisie
   );
 
   form.firstName.addEventListener("change", function () {
-    // on écoute le changement au niveau du texte saisi dans le champ
+    // on écoute le changement au niveau du texte saisi dans le champ avec le type "change"
+
     validFirstName(this); // la valeur "this" est évaluée pendant l'exécution, en fonction du contexte
   });
   form.lastName.addEventListener("change", function () {
@@ -154,6 +144,7 @@ function getForm() {
       // si l'input est conforme au regexp, alors...
       firstNameErrorMsg.innerHTML = "";
     } else {
+      // s'il n'est pas conforme...
       firstNameErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
     }
   };
@@ -241,3 +232,6 @@ function postForm() {
   }); // fin eventListener postForm
 } // fin envoi du formulaire postForm
 postForm();
+
+totalPrice();
+totalQuantity();
