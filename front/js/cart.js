@@ -109,20 +109,17 @@ deleteCartProduct();
 
 //formulaire avec regex
 function getForm() {
-  let form = document.querySelector(".cart__order__form"); // Ajout des Regex dans le but d'effectuer les test de contenu du formulaire
-
-  let emailRegExp = new RegExp( //Création des expressions régulières
-    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$" // Caractères email autorisés dans le champ de saisie
+  let form = document.querySelector(".cart__order__form");
+  let emailRegExp = new RegExp(
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
   );
-  let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$"); // Caractères autorisés dans le champ de saisie
+  let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
   let addressRegExp = new RegExp(
-    "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+" // Caractères address autorisés dans le champ de saisie
+    "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
   );
 
   form.firstName.addEventListener("change", function () {
-    // on écoute le changement au niveau du texte saisi dans le champ avec le type "change"
-
-    validFirstName(this); // la valeur "this" est évaluée pendant l'exécution, en fonction du contexte
+    validFirstName(this);
   });
   form.lastName.addEventListener("change", function () {
     validLastName(this);
@@ -140,44 +137,63 @@ function getForm() {
   const validFirstName = function (inputFirstName) {
     let firstNameErrorMsg = inputFirstName.nextElementSibling; // cible l'élément suivant (cfr DOM)
     if (charRegExp.test(inputFirstName.value)) {
-      // On test la valeur de l'input pour voir si elle est conforme au regexp
-      // si l'input est conforme au regexp, alors...
-      firstNameErrorMsg.innerHTML = "";
+      firstNameErrorMsg.innerHTML = "Prénom Valide.";
+      firstNameErrorMsg.classList.remove("text-danger");
+      firstNameErrorMsg.classList.add("text-success");
     } else {
-      // s'il n'est pas conforme...
-      firstNameErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      firstNameErrorMsg.innerHTML = "Veuillez renseigner un prénom valide SVP.";
+      firstNameErrorMsg.classList.remove("text-succes");
+      firstNameErrorMsg.classList.add("text-danger");
     }
   };
   const validLastName = function (inputLastName) {
     let lastNameErrorMsg = inputLastName.nextElementSibling;
     if (charRegExp.test(inputLastName.value)) {
-      lastNameErrorMsg.innerHTML = "";
+      lastNameErrorMsg.innerHTML = "Nom Valide.";
+      lastNameErrorMsg.classList.remove("text-danger");
+      lastNameErrorMsg.classList.add("text-success");
     } else {
-      lastNameErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      lastNameErrorMsg.innerHTML = "Veuillez renseigner un nom valide SVP.";
+      lastNameErrorMsg.classList.remove("text-succes");
+      lastNameErrorMsg.classList.add("text-danger");
     }
   };
   const validAddress = function (inputAddress) {
     let addressErrorMsg = inputAddress.nextElementSibling;
     if (addressRegExp.test(inputAddress.value)) {
-      addressErrorMsg.innerHTML = "";
+      addressErrorMsg.innerHTML = "Adresse Valide.";
+      addressErrorMsg.classList.remove("text-danger");
+      addressErrorMsg.classList.add("text-success");
     } else {
-      addressErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      addressErrorMsg.innerHTML =
+        "Veuillez renseigner une adresse valide commençant par un numéro SVP.";
+      addressErrorMsg.classList.remove("text-succes");
+      addressErrorMsg.classList.add("text-danger");
     }
   };
   const validCity = function (inputCity) {
     let cityErrorMsg = inputCity.nextElementSibling;
     if (charRegExp.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = "";
+      cityErrorMsg.innerHTML = "Localisation Valide.";
+      cityErrorMsg.classList.remove("text-danger");
+      cityErrorMsg.classList.add("text-success");
     } else {
-      cityErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      cityErrorMsg.innerHTML =
+        "Veuillez renseigner une localisation valide SVP.";
+      cityErrorMsg.classList.remove("text-succes");
+      cityErrorMsg.classList.add("text-danger");
     }
   };
   const validEmail = function (inputEmail) {
     let emailErrorMsg = inputEmail.nextElementSibling;
     if (emailRegExp.test(inputEmail.value)) {
-      emailErrorMsg.innerHTML = "";
+      emailErrorMsg.innerHTML = "Adresse Email Valide.";
+      emailErrorMsg.classList.remove("text-danger");
+      emailErrorMsg.classList.add("text-success");
     } else {
       emailErrorMsg.innerHTML = "Veuillez renseigner votre email.";
+      emailErrorMsg.classList.remove("text-succes");
+      emailErrorMsg.classList.add("text-danger");
     }
   };
 }
@@ -185,52 +201,50 @@ getForm();
 
 function postForm() {
   const order = document.getElementById("order");
-  order.addEventListener("click", (event) => {
-    // on écoute l'évènement "au click" sur le bouton commander !
-    event.preventDefault();
-
-    // La méthode preventDefault(), rattachée à l'interface Event, indique à l'agent utilisateur
-    // que si l'évènement n'est pas explicitement géré,
-    // l'action par défaut ne devrait pas être exécutée comme elle l'est normalement.
-    // L'évènement continue sa propagation habituelle à moins qu'un des gestionnaires d'évènement
-    // invoque stopPropagation() ou stopImmediatePropagation() pour interrompre la propagation.
+  order.addEventListener("click", async (eventOrder) => {
+    eventOrder.preventDefault(); // annule l'envoi du formulaire au "click"
 
     const contact = {
-      // je récupère les données du formulaire dans un objet
       firstName: document.getElementById("firstName").value,
       lastName: document.getElementById("lastName").value,
       address: document.getElementById("address").value,
       city: document.getElementById("city").value,
       email: document.getElementById("email").value,
     };
-    //Construction d'un array d'id depuis le local storage
     let productsArray = [];
     for (let m = 0; m < productCart.length; m += 1) {
       productsArray.push(productCart[m].id);
     }
-    // je mets les valeurs du formulaire et les produits sélectionnés
-    // dans un objet...
     const sendFormData = {
-      contact,
-      productsArray,
+      contact, // contact me renvoie bien "contact" avec ses éléments
+      productsArray, // productsArray me renvoie bien l'id des objets de la commande
     };
-    // j'envoie le formulaire + localStorage (sendFormData)
-    // ... que j'envoie au serveur
     const options = {
       method: "POST",
-      body: JSON.stringify(sendFormData),
+      body: JSON.stringify(sendFormData), // sendFormData est bien composé de contact & productsArray
       headers: {
-        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
       },
     };
-    fetch("http://localhost:3000/api/products/order", options)
+    // problème au niveau du fetch qui ne renvoi pas l'id et donne "undifined" sur la page confirmation
+    let response = await fetch(
+      "http://localhost:3000/api/products/order",
+      options
+    )
       .then((response) => response.json())
       .then((data) => {
         localStorage.setItem("orderId", data.orderId);
         document.location.href = "confirmation.html?id=" + data.orderId;
+      })
+      .catch((err) => {
+        alert("Problème avec fetch : " + err.message);
       });
-  }); // fin eventListener postForm
-} // fin envoi du formulaire postForm
+
+    let result = await response.json();
+    alert(result.message + data.orderId);
+  });
+}
 postForm();
 
 totalPrice();
