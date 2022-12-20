@@ -211,17 +211,17 @@ function postForm() {
       city: document.getElementById("city").value,
       email: document.getElementById("email").value,
     };
-    let productsArray = [];
+    let products = [];
     for (let m = 0; m < productCart.length; m += 1) {
-      productsArray.push(productCart[m].id);
+      products.push(productCart[m].id);
     }
     const sendFormData = {
       contact, // contact me renvoie bien "contact" avec ses éléments
-      productsArray, // productsArray me renvoie bien l'id des objets de la commande
+      products, // products me renvoie bien l'id des objets de la commande
     };
     const options = {
       method: "POST",
-      body: JSON.stringify(sendFormData), // sendFormData est bien composé de contact & productsArray
+      body: JSON.stringify(sendFormData), // sendFormData est bien composé de contact & products
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json;charset=utf-8",
