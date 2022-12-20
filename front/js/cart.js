@@ -227,7 +227,24 @@ function postForm() {
         "Content-Type": "application/json;charset=utf-8",
       },
     };
-    // problème au niveau du fetch qui ne renvoi pas l'id et donne "undifined" sur la page confirmation
+    // Dans le cadre du fecth ci-dessous, veiller à bien utiliser le nom d'objet "contact" et
+    // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas 
+    // être transmises. Raison pour laquelle "id" était "undifined".
+
+    /**
+ *
+ * Expects request to contain:
+ * contact: {
+ *   firstName: string,
+ *   lastName: string,
+ *   address: string,
+ *   city: string,
+ *   email: string
+ * }
+ * products: [string] <-- array of product _id
+ *
+ */
+
     let response = await fetch(
       "http://localhost:3000/api/products/order",
       options
@@ -237,7 +254,7 @@ function postForm() {
         localStorage.setItem("orderId", data.orderId);
         document.location.href = "confirmation.html?id=" + data.orderId;
       })
-      .catch((err) => {
+      .catch((err) => { // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
         alert("Problème avec fetch : " + err.message);
       });
 

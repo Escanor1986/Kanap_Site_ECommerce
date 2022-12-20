@@ -1,3 +1,18 @@
+const loaderContainer = document.querySelector("loaderContainer");
+
+// window.addEventListener("load", () => {
+// 
+// });
+
+document
+  .querySelectorAll('[data-component="progress-bar"]')
+  .forEach((element) => {
+    let p1 = new ProgressBar(element);
+      setInterval(() => {
+        p1.changeProgress(p1.progressValue + 10);
+      }, 350);
+  });
+
 let allProduct = []; // tableau vide pour y "stocker" les différents produits
 const getProducts = async () => {
   // fonction fetch pour appeller une url back en paramètre pour récupérer information
