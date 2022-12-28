@@ -1,8 +1,3 @@
-const loaderContainer = document.querySelector("loaderContainer");
-
-// window.addEventListener("load", () => {
-// 
-// });
 
 document
   .querySelectorAll('[data-component="progress-bar"]')
@@ -10,7 +5,7 @@ document
     let p1 = new ProgressBar(element);
       setInterval(() => {
         p1.changeProgress(p1.progressValue + 10);
-      }, 350);
+      }, 250);
   });
 
 let allProduct = []; // tableau vide pour y "stocker" les différents produits

@@ -1,3 +1,17 @@
+// window.addEventListener('load', checkJSloaded)
+
+// function checkJSloaded(src) {
+//     let script = document.createElement('script');
+//     script.addEventListener('load', (event) => {
+//         console.log('script.js has been fully loaded');
+//     });
+//     script.src = src;
+//      script.async = false;
+//     document.body.appendChild(script);
+// }
+// 
+//      checkJSLoaded("front/js/script.js");
+
 class ProgressBar {
   constructor(element) {
     this.element = element;

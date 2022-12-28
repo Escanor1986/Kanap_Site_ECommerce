@@ -107,103 +107,144 @@ function deleteCartProduct() {
 }
 deleteCartProduct();
 
-//formulaire avec regex
-function getForm() {
-  let form = document.querySelector(".cart__order__form");
-  let emailRegExp = new RegExp(
-    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
-  );
-  let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-  let addressRegExp = new RegExp(
-    "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
-  );
+let form = document.querySelector(".cart__order__form");
 
-  form.firstName.addEventListener("change", function () {
-    validFirstName(this);
-  });
-  form.lastName.addEventListener("change", function () {
-    validLastName(this);
-  });
-  form.address.addEventListener("change", function () {
-    validAddress(this);
-  });
-  form.city.addEventListener("change", function () {
-    validCity(this);
-  });
-  form.email.addEventListener("change", function () {
-    validEmail(this);
-  });
+let emailRegExp = new RegExp(
+  "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
+);
+let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+let addressRegExp = new RegExp(
+  "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
+);
+const regexpData = [
+  charRegExp,
+  charRegExp,
+  addressRegExp,
+  charRegExp,
+  emailRegExp,
+];
+const inputValidImg = document.querySelectorAll(".icon__verif");
+const inputData = [
+  ...document.querySelectorAll(".icon__input__container input"),
+];
+const inputFieldErrorMesg = [
+  ...document.querySelectorAll(".cart__order__form__question p"),
+];
+const errorMsgIds = [
+  "firstNameErrorMsg",
+  "lastNameErrorMsg",
+  "addressErrorMsg",
+  "cityErrorMsg",
+  "emailErrorMsg",
+];
 
-  const validFirstName = function (inputFirstName) {
-    let firstNameErrorMsg = inputFirstName.nextElementSibling; // cible l'élément suivant (cfr DOM)
-    if (charRegExp.test(inputFirstName.value)) {
-      firstNameErrorMsg.innerHTML = "Prénom Valide.";
-      firstNameErrorMsg.classList.remove("text-danger");
-      firstNameErrorMsg.classList.add("text-success");
-    } else {
-      firstNameErrorMsg.innerHTML = "Veuillez renseigner un prénom valide SVP.";
-      firstNameErrorMsg.classList.remove("text-succes");
-      firstNameErrorMsg.classList.add("text-danger");
-    }
-  };
-  const validLastName = function (inputLastName) {
-    let lastNameErrorMsg = inputLastName.nextElementSibling;
-    if (charRegExp.test(inputLastName.value)) {
-      lastNameErrorMsg.innerHTML = "Nom Valide.";
-      lastNameErrorMsg.classList.remove("text-danger");
-      lastNameErrorMsg.classList.add("text-success");
-    } else {
-      lastNameErrorMsg.innerHTML = "Veuillez renseigner un nom valide SVP.";
-      lastNameErrorMsg.classList.remove("text-succes");
-      lastNameErrorMsg.classList.add("text-danger");
-    }
-  };
-  const validAddress = function (inputAddress) {
-    let addressErrorMsg = inputAddress.nextElementSibling;
-    if (addressRegExp.test(inputAddress.value)) {
-      addressErrorMsg.innerHTML = "Adresse Valide.";
-      addressErrorMsg.classList.remove("text-danger");
-      addressErrorMsg.classList.add("text-success");
-    } else {
-      addressErrorMsg.innerHTML =
-        "Veuillez renseigner une adresse valide commençant par un numéro SVP.";
-      addressErrorMsg.classList.remove("text-succes");
-      addressErrorMsg.classList.add("text-danger");
-    }
-  };
-  const validCity = function (inputCity) {
-    let cityErrorMsg = inputCity.nextElementSibling;
-    if (charRegExp.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = "Localisation Valide.";
-      cityErrorMsg.classList.remove("text-danger");
-      cityErrorMsg.classList.add("text-success");
-    } else {
-      cityErrorMsg.innerHTML =
-        "Veuillez renseigner une localisation valide SVP.";
-      cityErrorMsg.classList.remove("text-succes");
-      cityErrorMsg.classList.add("text-danger");
-    }
-  };
-  const validEmail = function (inputEmail) {
-    let emailErrorMsg = inputEmail.nextElementSibling;
-    if (emailRegExp.test(inputEmail.value)) {
-      emailErrorMsg.innerHTML = "Adresse Email Valide.";
-      emailErrorMsg.classList.remove("text-danger");
-      emailErrorMsg.classList.add("text-success");
-    } else {
-      emailErrorMsg.innerHTML = "Veuillez renseigner votre email.";
-      emailErrorMsg.classList.remove("text-succes");
-      emailErrorMsg.classList.add("text-danger");
-    }
-  };
+inputData[0].addEventListener("change", firstNameValidation);
+inputData[0].addEventListener("blur", firstNameValidation);
+inputData[0].addEventListener("input", firstNameValidation);
+inputData[1].addEventListener("change", lastNameValidation);
+inputData[1].addEventListener("blur", lastNameValidation);
+inputData[1].addEventListener("input", lastNameValidation);
+inputData[2].addEventListener("change", addressValidation);
+inputData[2].addEventListener("blur", addressValidation);
+inputData[2].addEventListener("input", addressValidation);
+inputData[3].addEventListener("change", cityValidation);
+inputData[3].addEventListener("blur", cityValidation);
+inputData[3].addEventListener("input", cityValidation);
+inputData[4].addEventListener("change", emailValidation);
+inputData[4].addEventListener("blur", emailValidation);
+inputData[4].addEventListener("input", emailValidation);
+
+function firstNameValidation() {
+  if (
+    regexpData[0].test(inputData[0].value) &&
+    inputData[0].value != undefined
+  ) {
+    validForm({ index: 0, validation: true });
+  } else {
+    validForm({ index: 0, validation: false });
+  }
 }
-getForm();
+function lastNameValidation() {
+  if (
+    regexpData[1].test(inputData[1].value) &&
+    inputData[1].value != undefined
+  ) {
+    validForm({ index: 1, validation: true });
+  } else {
+    validForm({ index: 1, validation: false });
+  }
+}
+function addressValidation() {
+  if (
+    regexpData[2].test(inputData[2].value) &&
+    inputData[2].value != undefined
+  ) {
+    validForm({ index: 2, validation: true });
+  } else {
+    validForm({ index: 2, validation: false });
+  }
+}
+function cityValidation() {
+  if (
+    regexpData[3].test(inputData[3].value) &&
+    inputData[3].value != undefined
+  ) {
+    validForm({ index: 3, validation: true });
+  } else {
+    validForm({ index: 3, validation: false });
+  }
+}
+function emailValidation() {
+  if (
+    regexpData[4].test(inputData[4].value) &&
+    inputData[4].value != undefined
+  ) {
+    validForm({ index: 4, validation: true });
+  } else {
+    validForm({ index: 4, validation: false });
+  }
+}
+let isValid;
+function validForm({index, validation}) {
+  if (validation) {
+    inputValidImg[index].style.display = "inline";
+    inputValidImg[index].src = "/front/images/icons/check.png";
+    inputValidImg[index].style.display = "block";
+    inputFieldErrorMesg[index].innerHTML = "";
+    inputFieldErrorMesg[index].classList.remove("text-danger");
+    inputFieldErrorMesg[index].classList.add("text-success");
+    isValid = true;
+  } else {
+    inputValidImg[index].style.display = "inline";
+    inputValidImg[index].src = "/front/images/icons/reject.png";
+    inputValidImg[index].style.display = "block";
+    inputFieldErrorMesg[index].innerHTML =
+      "Veuillez renseigner correctement ce champ !";
+    inputFieldErrorMesg[index].classList.remove("text-succes");
+    inputFieldErrorMesg[index].classList.add("text-danger");
+    isValid = false;
+  }
+  return isValid;
+}
+
+console.log(inputData);
+console.log(regexpData);
+console.log(inputFieldErrorMesg);
+console.log("Le prénom est " + regexpData[0].test(inputData[0].value));
+console.log("Le nom est " + regexpData[1].test(inputData[1].value));
+console.log("L'adresse est " + regexpData[2].test(inputData[2].value));
+console.log("La ville est " + regexpData[3].test(inputData[3].value));
+console.log("L'email est " + regexpData[4].test(inputData[4].value));
+
+const order = document.getElementById("order");
 
 function postForm() {
-  const order = document.getElementById("order");
   order.addEventListener("click", async (eventOrder) => {
     eventOrder.preventDefault(); // annule l'envoi du formulaire au "click"
-
+    if (!isValid) {
+      alert("Veuillez remplir tout les champs correctement !");
+      return;
+    }
     const contact = {
       firstName: document.getElementById("firstName").value,
       lastName: document.getElementById("lastName").value,
@@ -228,22 +269,8 @@ function postForm() {
       },
     };
     // Dans le cadre du fecth ci-dessous, veiller à bien utiliser le nom d'objet "contact" et
-    // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas 
-    // être transmises. Raison pour laquelle "id" était "undifined".
-
-    /**
- *
- * Expects request to contain:
- * contact: {
- *   firstName: string,
- *   lastName: string,
- *   address: string,
- *   city: string,
- *   email: string
- * }
- * products: [string] <-- array of product _id
- *
- */
+    // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas
+    // être transmises. Raison pour laquelle "id" était "undifined" sur la page confirmation.
 
     let response = await fetch(
       "http://localhost:3000/api/products/order",
@@ -254,7 +281,8 @@ function postForm() {
         localStorage.setItem("orderId", data.orderId);
         document.location.href = "confirmation.html?id=" + data.orderId;
       })
-      .catch((err) => { // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
+      .catch((err) => {
+        // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
         alert("Problème avec fetch : " + err.message);
       });
 

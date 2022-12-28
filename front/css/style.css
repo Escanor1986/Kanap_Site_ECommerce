@@ -67,6 +67,9 @@ h2 {
 }
 
 .progressBar {
+  -webkit-box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
+  -moz-box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
+  box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
   width: 50%;
   border: 1px solid var(--main-color);
   border-radius: 25px;

@@ -101,6 +101,30 @@ h2 {
 	flex-direction: column;
 	margin-bottom: 25px;
 }
+
+/* Form image validation */
+.icon__input__container {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+input::placeholder{
+	font-style: italic;
+	font-size: small;
+	color: #767676e7;
+}
+.icon__verif {
+	width: 26px;
+	position: absolute;
+	top: 56%;
+	transform: translateY(-50%);
+	right: 0px;
+	border-radius: 13px;
+	display: none;
+}
+
+/* Form image validation */
+
 .cart__order__form__question input {
 	border-radius: 13px;
 	border: 0;
