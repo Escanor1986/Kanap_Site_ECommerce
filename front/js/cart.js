@@ -138,21 +138,21 @@ const errorMsgIds = [
   "emailErrorMsg",
 ];
 
-inputData[0].addEventListener("change", firstNameValidation);
-inputData[0].addEventListener("blur", firstNameValidation);
-inputData[0].addEventListener("input", firstNameValidation);
-inputData[1].addEventListener("change", lastNameValidation);
-inputData[1].addEventListener("blur", lastNameValidation);
-inputData[1].addEventListener("input", lastNameValidation);
-inputData[2].addEventListener("change", addressValidation);
-inputData[2].addEventListener("blur", addressValidation);
-inputData[2].addEventListener("input", addressValidation);
-inputData[3].addEventListener("change", cityValidation);
-inputData[3].addEventListener("blur", cityValidation);
-inputData[3].addEventListener("input", cityValidation);
-inputData[4].addEventListener("change", emailValidation);
-inputData[4].addEventListener("blur", emailValidation);
-inputData[4].addEventListener("input", emailValidation);
+["change", "blur", "input"].forEach((evt) =>
+  inputData[0].addEventListener(evt, firstNameValidation, false)
+);
+["change", "blur", "input"].forEach((evt) =>
+  inputData[1].addEventListener(evt, lastNameValidation, false)
+);
+["change", "blur", "input"].forEach((evt) =>
+  inputData[2].addEventListener(evt, addressValidation, false)
+);
+["change", "blur", "input"].forEach((evt) =>
+  inputData[3].addEventListener(evt, cityValidation, false)
+);
+["change", "blur", "input"].forEach((evt) =>
+  inputData[4].addEventListener(evt, emailValidation, false)
+);
 
 function firstNameValidation() {
   if (
@@ -205,7 +205,7 @@ function emailValidation() {
   }
 }
 let isValid;
-function validForm({index, validation}) {
+function validForm({ index, validation }) {
   if (validation) {
     inputValidImg[index].style.display = "inline";
     inputValidImg[index].src = "/front/images/icons/check.png";
@@ -294,3 +294,19 @@ postForm();
 
 totalPrice();
 totalQuantity();
+
+// inputData[0].addEventListener("change", firstNameValidation);
+// inputData[0].addEventListener("blur", firstNameValidation);
+// inputData[0].addEventListener("input", firstNameValidation);
+// inputData[1].addEventListener("change", lastNameValidation);
+// inputData[1].addEventListener("blur", lastNameValidation);
+// inputData[1].addEventListener("input", lastNameValidation);
+// inputData[2].addEventListener("change", addressValidation);
+// inputData[2].addEventListener("blur", addressValidation);
+// inputData[2].addEventListener("input", addressValidation);
+// inputData[3].addEventListener("change", cityValidation);
+// inputData[3].addEventListener("blur", cityValidation);
+// inputData[3].addEventListener("input", cityValidation);
+// inputData[4].addEventListener("change", emailValidation);
+// inputData[4].addEventListener("blur", emailValidation);
+// inputData[4].addEventListener("input", emailValidation);

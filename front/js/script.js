@@ -1,5 +1,5 @@
 
-document
+const loading = document
   .querySelectorAll('[data-component="progress-bar"]')
   .forEach((element) => {
     let p1 = new ProgressBar(element);
