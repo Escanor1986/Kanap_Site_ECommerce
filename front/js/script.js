@@ -23,12 +23,12 @@ const displayKanap = async () => {
   allProduct.map((product) => {
     // construire ici du html avec les produits, pour chaque itération il va mettre la variable
     // à jour avec les produits dans la boucle
-    console.log(product.name); // ici en affichant le console.log
+    // console.log(product.name); 
 
     const link = document.createElement("a");
     document.getElementById("items").appendChild(link);
     link.setAttribute("href", "./product.html?id=" + product._id);
-    console.log(link);
+    // console.log(link);
 
     const article = document.createElement("article");
     document.getElementById("items").appendChild(article);
