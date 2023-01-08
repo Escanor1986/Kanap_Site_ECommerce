@@ -160,8 +160,10 @@ function firstNameValidation() {
     inputData[0].value != undefined
   ) {
     validForm({ index: 0, validation: true });
+    return true;
   } else {
     validForm({ index: 0, validation: false });
+    return false;
   }
 }
 function lastNameValidation() {
@@ -170,8 +172,10 @@ function lastNameValidation() {
     inputData[1].value != undefined
   ) {
     validForm({ index: 1, validation: true });
+    return true;
   } else {
     validForm({ index: 1, validation: false });
+    return false;
   }
 }
 function addressValidation() {
@@ -180,8 +184,10 @@ function addressValidation() {
     inputData[2].value != undefined
   ) {
     validForm({ index: 2, validation: true });
+    return true;
   } else {
     validForm({ index: 2, validation: false });
+    return false;
   }
 }
 function cityValidation() {
@@ -190,8 +196,10 @@ function cityValidation() {
     inputData[3].value != undefined
   ) {
     validForm({ index: 3, validation: true });
+    return true;
   } else {
     validForm({ index: 3, validation: false });
+    return false;
   }
 }
 function emailValidation() {
@@ -200,11 +208,12 @@ function emailValidation() {
     inputData[4].value != undefined
   ) {
     validForm({ index: 4, validation: true });
+    return true;
   } else {
     validForm({ index: 4, validation: false });
+    return false;
   }
 }
-let isValid;
 function validForm({ index, validation }) {
   if (validation) {
     inputValidImg[index].style.display = "inline";
@@ -213,7 +222,6 @@ function validForm({ index, validation }) {
     inputFieldErrorMesg[index].innerHTML = "";
     inputFieldErrorMesg[index].classList.remove("text-danger");
     inputFieldErrorMesg[index].classList.add("text-success");
-    isValid = true;
   } else {
     inputValidImg[index].style.display = "inline";
     inputValidImg[index].src = "/front/images/icons/reject.png";
@@ -222,9 +230,7 @@ function validForm({ index, validation }) {
       "Veuillez renseigner correctement ce champ !";
     inputFieldErrorMesg[index].classList.remove("text-succes");
     inputFieldErrorMesg[index].classList.add("text-danger");
-    isValid = false;
   }
-  return isValid;
 }
 
 console.log(inputData);
@@ -241,7 +247,7 @@ const order = document.getElementById("order");
 function postForm() {
   order.addEventListener("click", async (eventOrder) => {
     eventOrder.preventDefault(); // annule l'envoi du formulaire au "click"
-    if (!isValid) {
+    if (!(firstNameValidation() && lastNameValidation() && addressValidation() && cityValidation() && emailValidation())) {
       alert("Veuillez remplir tout les champs correctement !");
       return;
     }
