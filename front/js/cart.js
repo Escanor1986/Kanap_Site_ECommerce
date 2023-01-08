@@ -301,18 +301,3 @@ postForm();
 totalPrice();
 totalQuantity();
 
-// inputData[0].addEventListener("change", firstNameValidation);
-// inputData[0].addEventListener("blur", firstNameValidation);
-// inputData[0].addEventListener("input", firstNameValidation);
-// inputData[1].addEventListener("change", lastNameValidation);
-// inputData[1].addEventListener("blur", lastNameValidation);
-// inputData[1].addEventListener("input", lastNameValidation);
-// inputData[2].addEventListener("change", addressValidation);
-// inputData[2].addEventListener("blur", addressValidation);
-// inputData[2].addEventListener("input", addressValidation);
-// inputData[3].addEventListener("change", cityValidation);
-// inputData[3].addEventListener("blur", cityValidation);
-// inputData[3].addEventListener("input", cityValidation);
-// inputData[4].addEventListener("change", emailValidation);
-// inputData[4].addEventListener("blur", emailValidation);
-// inputData[4].addEventListener("input", emailValidation);
