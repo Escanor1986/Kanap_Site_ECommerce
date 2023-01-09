@@ -79,14 +79,14 @@ addToCartBtn.addEventListener("click", () => {
       }
     }
     productFinalCart.push(productCart); // cas où le produit n'est pas dans le panier
-    localStorage.setItem("products", JSON.stringify(productFinalCart));
+    localStorage.setItem("products", JSON.stringify(productFinalCart, null, 3));
   } else {
     if (productCart.quantity > 100) {
       alert("Erreur, trop de produit en commande !");
       return;
     }
     productFinalCart.push(productCart); // cas où Aucune variable dans le localStorage
-    localStorage.setItem("products", JSON.stringify(productFinalCart));
+    localStorage.setItem("products", JSON.stringify(productFinalCart, null, 3));
     console.log(productFinalCart);
   }
 });

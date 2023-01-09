@@ -230,9 +230,9 @@ function validForm({ index, validation }) {
   }
 }
 
-console.table(inputData);
-console.table(regexpData);
-console.table(inputFieldErrorMesg);
+console.log(inputData);
+console.log(regexpData);
+console.log(inputFieldErrorMesg);
 console.log("Le prénom est " + regexpData[0].test(inputData[0].value));
 console.log("Le nom est " + regexpData[1].test(inputData[1].value));
 console.log("L'adresse est " + regexpData[2].test(inputData[2].value));
