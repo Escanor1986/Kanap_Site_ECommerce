@@ -1,11 +1,10 @@
-
 const loading = document
   .querySelectorAll('[data-component="progress-bar"]')
   .forEach((element) => {
     let p1 = new ProgressBar(element);
-      setInterval(() => {
-        p1.changeProgress(p1.progressValue + 10);
-      }, 250);
+    setInterval(() => {
+      p1.changeProgress(p1.progressValue + 10);
+    }, 250);
   });
 
 let allProduct = []; // tableau vide pour y "stocker" les différents produits
@@ -19,11 +18,25 @@ const getProducts = async () => {
 
 const displayKanap = async () => {
   await getProducts();
-  console.log(allProduct);
+
+  const idValue = allProduct.map((value) => {
+    return value._id;
+  });
+
+  const nameUpperCase = allProduct
+    .filter((value) => value.price >= 2249)
+    .map((value) => ({ ...value, name: value.name.toUpperCase() }));
+
+  allProduct.sort((c, d) => c.price - d.price);
+
+  console.log(idValue);
+  console.log(nameUpperCase);
+  console.table(allProduct);
+
   allProduct.map((product) => {
     // construire ici du html avec les produits, pour chaque itération il va mettre la variable
     // à jour avec les produits dans la boucle
-    // console.log(product.name); 
+    // console.log(product.name);
 
     const link = document.createElement("a");
     document.getElementById("items").appendChild(link);
