@@ -1,10 +1,35 @@
-console.log(localStorage);
+const urlGetFetch = "http://localhost:3000/api/products/";
 
-let productCart = JSON.parse(localStorage.getItem("products"));
+function getPrice(id) {
+  fetch(`${urlGetFetch}${id}`) // url d'où sont appelées les données (product.js)
+    .then((response) => response.json())
+    .then((data) => {
+      return data.price;
+    })
+    .catch((error) => {
+      alert("Problème avec fetch : " + error.message);
+    });
+}
+function getProductCart() {
+  let productCart = JSON.parse(localStorage.getItem("products"));
+  
+  if (productCart === null) {
+    productCart = [];
+    return productCart;
+  }
+  productCart.map((product, index) => {
+    productCart[index].price = parseInt(getPrice(product.id));
+  });
+  return productCart;
+}
+
 console.log(productCart);
+// productCart.sort((c, d) => c.price - d.price);
 
 let cartContent = document.getElementById("cart__items");
+
 let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
+
 function setCartcontent() {
   productCart.map((product) => {
     cartContentInstanciated =
@@ -17,7 +42,7 @@ function setCartcontent() {
       <div class="cart__item__content__description">
         <h2>${product.name}</h2>
         <p>${product.colors}</p>
-        <p>${product.price}</p>
+        <p></p>
       </div>
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
@@ -34,14 +59,14 @@ function setCartcontent() {
     cartContent.innerHTML = cartContentInstanciated;
   });
 }
-productCart.sort((c, d) => c.price - d.price);
 setCartcontent();
 
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
 function totalPrice() {
-  let productCart = JSON.parse(localStorage.getItem("products"));
+  productCart = getProductCart();
+  // appel API pour récupération du prix
   const total = productCart.reduce(
     (acc, value) => (acc += value.price * value.quantity),
     0
@@ -51,7 +76,7 @@ function totalPrice() {
 
 function totalQuantity() {
   let sum = 0;
-  let productCart = JSON.parse(localStorage.getItem("products"));
+  productCart = getProductCart();
   for (let j = 0; j < productCart.length; j += 1) {
     // console.log(productCart);
     sum = sum + parseInt(productCart[j].quantity);
@@ -110,7 +135,7 @@ let emailRegExp = new RegExp(
   "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
 );
 let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-let addressRegExp = new RegExp(
+let addressRegExp = new RegExp( // a changé pour mettre le numéro où on le souhaite dans l'adresse
   "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
 );
 const regexpData = [
@@ -127,6 +152,7 @@ const inputData = [
 const inputFieldErrorMesg = [
   ...document.querySelectorAll(".cart__order__form__question p"),
 ];
+
 const errorMsgIds = [
   "firstNameErrorMsg",
   "lastNameErrorMsg",

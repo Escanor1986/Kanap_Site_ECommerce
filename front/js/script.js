@@ -1,3 +1,4 @@
+// Script de la "progress bar" au niveau de la page d'accueil
 const loading = document
   .querySelectorAll('[data-component="progress-bar"]')
   .forEach((element) => {
@@ -7,66 +8,65 @@ const loading = document
     }, 250);
   });
 
-let allProduct = []; // tableau vide pour y "stocker" les différents produits
-const getProducts = async () => {
-  // fonction fetch pour appeller une url back en paramètre pour récupérer information
-  await fetch("http://localhost:3000/api/products/") // url d'où sont appelées les données (product.js)
-    .then((response) => response.json()) // début promesse chaînée
-    .then((data) => (allProduct = data))
-    .catch((error) => console.log(error)); // fin promesse chaînée
-};
+// URL de destination pour "fetch"
+const urlGetFetch = "http://localhost:3000/api/products/";
 
+// tableau vide pour y "stocker" les différents produits
+let allProduct = [];
+
+// fonction fetch pour appeler l'API
+const getProducts = async () => {
+  await fetch(urlGetFetch) // url d'où sont appelées les données (product.js)
+  .then((response) => response.json()) 
+  .then((data) => (allProduct = data))
+  .catch((error) => {
+    alert("Problème avec fetch : " + error.message);
+  });
+};
+ 
+// fonction asynchrone qui attend et restitue les données demandées à l'API
 const displayKanap = async () => {
   await getProducts();
 
-  const idValue = allProduct.map((value) => {
-    return value._id;
-  });
-
-  const nameUpperCase = allProduct
-    .filter((value) => value.price >= 2249)
-    .map((value) => ({ ...value, name: value.name.toUpperCase() }));
-
+  // Tri croissant du tableau de produit par prix
   allProduct.sort((c, d) => c.price - d.price);
 
-  console.log(idValue);
-  console.log(nameUpperCase);
-  console.table(allProduct);
-
+  // on itère sur le tableau avec la boucle map pour insertion dynamique dans le DOM
   allProduct.map((product) => {
-    // construire ici du html avec les produits, pour chaque itération il va mettre la variable
-    // à jour avec les produits dans la boucle
-    // console.log(product.name);
 
+    // Création & implémentation dans le DOM du tag "link" du produit récupéré de l'API
     const link = document.createElement("a");
     document.getElementById("items").appendChild(link);
     link.setAttribute("href", "./product.html?id=" + product._id);
-    // console.log(link);
 
+    // Création & implémentation dans le DOM du tag "article" du produit récupéré de l'API
     const article = document.createElement("article");
     document.getElementById("items").appendChild(article);
-    link.prepend(article); // article devient l'enfant de link
+    link.prepend(article); 
 
+    // Création & implémentation dans le DOM du tag "p" du produit récupéré de l'API
     const paragraphe = document.createElement("p");
     document.getElementById("items").appendChild(paragraphe);
     paragraphe.classList.add("productDescription");
     paragraphe.innerText = product.description;
-    article.prepend(paragraphe); // paragraphe devient l'enfant de article
+    article.prepend(paragraphe); 
 
+    // Création & implémentation dans le DOM du tag "h3"" du produit récupéré de l'API
     const name = document.createElement("h3");
     document.getElementById("items").appendChild(name);
-    name.classList.add("productName"); // ajoute la classe productName
-    name.innerText = product.name; // place le texte préétabli dans le json dans le paragraphe
-    article.prepend(name); // name devient l'enfant de article
+    name.classList.add("productName"); 
+    name.innerText = product.name;
+    article.prepend(name); 
 
+    // Création & implémentation dans le DOM du tag "img"" du produit récupéré de l'API
     const image = document.createElement("img");
     image.setAttribute("src", product.imageUrl);
     image.setAttribute("alt", product.altTxt);
     document.getElementById("items").appendChild(image);
-    article.prepend(image); // image devient l'enfant de article
+    article.prepend(image);
   });
 };
+
+// Appel de la fonction pour affichage des produits sur la page
 displayKanap();
 
-// chercher la partie create.element
-// Recréer l'arborescence html en javascript

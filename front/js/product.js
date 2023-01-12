@@ -1,30 +1,34 @@
 let parametres = new URL(document.location).searchParams;
 let id = parametres.get("id");
+const url = `http://localhost:3000/api/products/${id}`;
 let product;
+
 // Call API per product ID
 const fetchProduct = async () => {
-  await fetch(`http://localhost:3000/api/products/${id}`) // on récupère l'id via searchparams (ligne 3 & 4)
+  await fetch(url)
     .then((response) => response.json())
     .then((data) => (product = data))
-    .catch((error) => console.log(error)); // fin promesse chaînée
+    .catch((error) => {
+      alert("Problème avec fetch : " + error.message);
+    });
 };
+
 // Function showing product details
 const displayProductDetails = async () => {
   await fetchProduct();
-  console.log(product);
 
-  const productImg = document.createElement("img"); // création de la balise img
-  productImg.setAttribute("src", product.imageUrl); // implémentation attribut source de l'img
-  productImg.setAttribute("alt", product.altTxt); // implémentation attribut alt de l'img
-  document.getElementsByClassName("item__img")[0].appendChild(productImg); // insertion sous le parent item__img
+  const productImg = document.createElement("img");
+  productImg.setAttribute("src", product.imageUrl);
+  productImg.setAttribute("alt", product.altTxt);
+  document.getElementsByClassName("item__img")[0].appendChild(productImg);
 
-  const productName = document.querySelector("#title"); // nom de produit dans la balise titre
+  const productName = document.querySelector("#title");
   productName.innerText = product.name;
 
-  const productPrice = document.querySelector("#price"); // prix dans la balise span
+  const productPrice = document.querySelector("#price");
   productPrice.innerText = product.price;
 
-  const productDescription = document.querySelector("#description"); // description produit balise p
+  const productDescription = document.querySelector("#description"); //
   productDescription.innerText = product.description;
 
   const productColor = document.getElementById("colors");
@@ -42,16 +46,17 @@ addToCartBtn.addEventListener("click", () => {
 
   const productNumber = document.getElementById("quantity").value;
   const productColor = document.getElementById("colors").value;
-  console.log(productNumber);
-  console.log(productColor);
+  
   if (productNumber === "0" || productColor === "") {
-    alert("Veuillez préciser la couleur et le nombre d'objets");
+    alert(
+      "Veuillez préciser la couleur et le nombre d'objets compris entre 1 et 100"
+    );
     return;
   }
   let productCart = {
     id: id,
     name: product.name,
-    price: parseInt(product.price),
+    // price: parseInt(product.price),
     quantity: parseInt(productNumber, 10),
     colors: productColor,
     imageUrl: product.imageUrl,
@@ -59,6 +64,7 @@ addToCartBtn.addEventListener("click", () => {
   };
   console.log(productCart);
   if (localStorage.getItem("products")) {
+    // cas où il y a déjà quelque chose dans le localStorage
     productFinalCart = JSON.parse(localStorage.getItem("products"));
     for (let i = 0; i < productFinalCart.length; i += 1) {
       if (
@@ -69,7 +75,7 @@ addToCartBtn.addEventListener("click", () => {
         /* Maj de la quantité */ productFinalCart[i].quantity =
           productCart.quantity + productFinalCart[i].quantity;
         /* Quantité < 100 */ if (productFinalCart[i].quantity > 100) {
-          productFinalCart[i].quantity = 100;
+          productFinalCart[i].quantity = 0; // juste ne
           alert("Erreur, trop de produit en commande !");
           return;
         }
@@ -87,6 +93,5 @@ addToCartBtn.addEventListener("click", () => {
     }
     productFinalCart.push(productCart); // cas où Aucune variable dans le localStorage
     localStorage.setItem("products", JSON.stringify(productFinalCart, null, 3));
-    console.log(productFinalCart);
   }
 });
