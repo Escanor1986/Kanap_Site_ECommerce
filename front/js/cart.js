@@ -1,36 +1,69 @@
-const urlGetFetch = "http://localhost:3000/api/products/";
+let productCart = JSON.parse(localStorage.getItem("products"));
+productCart.sort((a, b) => a.id - b.id);
 
-function getPrice(id) {
-  fetch(`${urlGetFetch}${id}`) // url d'où sont appelées les données (product.js)
+const urlGet = "http://localhost:3000/api/products/";
+
+const getProducts = async () => {
+  await fetch(urlGet) // url d'où sont appelées les données (product.js)
     .then((response) => response.json())
-    .then((data) => {
-      return data.price;
-    })
+    .then((data) => (allProduct = data))
     .catch((error) => {
       alert("Problème avec fetch : " + error.message);
     });
-}
-function getProductCart() {
-  let productCart = JSON.parse(localStorage.getItem("products"));
-  
-  if (productCart === null) {
-    productCart = [];
-    return productCart;
-  }
-  productCart.map((product, index) => {
-    productCart[index].price = parseInt(getPrice(product.id));
-  });
-  return productCart;
-}
+};
+// const data = getPriceAndId(urlGet).then((value) => console.log(value));
+const getGlobalArray = async () => {
+  await getProducts();
 
-console.log(productCart);
-// productCart.sort((c, d) => c.price - d.price);
+  const apiArray = allProduct.map((items) => ({
+    id: items._id,
+    name: items.name,
+    price: items.price,
+    quantity: null,
+    colors: items.colors,
+    imageUrl: items.imageUrl,
+    description: items.description,
+  }));
+  apiArray.sort((a, b) => a.id - b.id);
+  
+  console.log(apiArray);
+  console.log(productCart);
+
+  const usersWithProfiles = productCart.map((items) => {
+    const product = apiArray.find((product) => (items.id === product.price));
+    return { ...items, product };
+  });
+  console.log(usersWithProfiles);
+
+  // let globalArray = [...apiArray, ...productCart];
+  // console.log(globalArray);
+
+  // const combinedItems = (globalArray = []) => {
+  //   const mergeGlobalArray = globalArray.reduce((acc, obj) => {
+  //     let found = false;
+  //     for (let i = 0; i < acc.length; i++) {
+  //       if (acc[i].id === obj.id) {
+  //         found = true;
+  //         acc[i].count++;
+  //       }
+  //     }
+  //     if (!found) {
+  //       obj.count = 1;
+  //       acc.push(obj);
+  //     }
+  //     return acc;
+  //   }, []);
+  //   return mergeGlobalArray;
+  // };
+  // console.log(combinedItems(globalArray));
+};
+getGlobalArray();
 
 let cartContent = document.getElementById("cart__items");
 
 let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
 
-function setCartcontent() {
+const setCartcontent = async () => {
   productCart.map((product) => {
     cartContentInstanciated =
       cartContentInstanciated +
@@ -58,15 +91,15 @@ function setCartcontent() {
 `;
     cartContent.innerHTML = cartContentInstanciated;
   });
-}
+};
 setCartcontent();
 
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
 function totalPrice() {
-  productCart = getProductCart();
-  // appel API pour récupération du prix
+  let productCart = JSON.parse(localStorage.getItem("products"));
+
   const total = productCart.reduce(
     (acc, value) => (acc += value.price * value.quantity),
     0
@@ -76,7 +109,7 @@ function totalPrice() {
 
 function totalQuantity() {
   let sum = 0;
-  productCart = getProductCart();
+  productCart = JSON.parse(localStorage.getItem("products"));
   for (let j = 0; j < productCart.length; j += 1) {
     // console.log(productCart);
     sum = sum + parseInt(productCart[j].quantity);
@@ -255,15 +288,6 @@ function validForm({ index, validation }) {
     inputFieldErrorMesg[index].classList.add("text-danger");
   }
 }
-
-console.log(inputData);
-console.log(regexpData);
-console.log(inputFieldErrorMesg);
-console.log("Le prénom est " + regexpData[0].test(inputData[0].value));
-console.log("Le nom est " + regexpData[1].test(inputData[1].value));
-console.log("L'adresse est " + regexpData[2].test(inputData[2].value));
-console.log("La ville est " + regexpData[3].test(inputData[3].value));
-console.log("L'email est " + regexpData[4].test(inputData[4].value));
 
 const order = document.getElementById("order");
 

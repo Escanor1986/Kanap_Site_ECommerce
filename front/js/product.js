@@ -16,7 +16,7 @@ const fetchProduct = async () => {
 // Function showing product details
 const displayProductDetails = async () => {
   await fetchProduct();
-
+  
   const productImg = document.createElement("img");
   productImg.setAttribute("src", product.imageUrl);
   productImg.setAttribute("alt", product.altTxt);
@@ -56,11 +56,11 @@ addToCartBtn.addEventListener("click", () => {
   let productCart = {
     id: id,
     name: product.name,
-    // price: parseInt(product.price),
-    quantity: parseInt(productNumber, 10),
+    price: NaN,
+    localQuantity: parseInt(productNumber, 10),
     colors: productColor,
     imageUrl: product.imageUrl,
-    description: product.description,
+    description: product.description
   };
   console.log(productCart);
   if (localStorage.getItem("products")) {
@@ -95,3 +95,29 @@ addToCartBtn.addEventListener("click", () => {
     localStorage.setItem("products", JSON.stringify(productFinalCart, null, 3));
   }
 });
+
+
+
+// Merge JavaScript objects with the same key value and count them
+
+  // let globalArray = [...apiArray, ...productCart];
+  // console.log(globalArray);
+
+  // const combinedItems = (globalArray = []) => {
+  //   const mergeGlobalArray = globalArray.reduce((acc, obj) => {
+  //     let found = false;
+  //     for (let i = 0; i < acc.length; i++) {
+  //       if (acc[i].id === obj.id) {
+  //         found = true;
+  //         acc[i].count++;
+  //       }
+  //     }
+  //     if (!found) {
+  //       obj.count = 1;
+  //       acc.push(obj);
+  //     }
+  //     return acc;
+  //   }, []);
+  //   return mergeGlobalArray;
+  // };
+  // console.log(combinedItems(globalArray));
