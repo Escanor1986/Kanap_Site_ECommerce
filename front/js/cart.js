@@ -1,7 +1,3 @@
-let productCart = JSON.parse(localStorage.getItem("products"));
-productCart.sort((a, b) => a.id - b.id);
-console.log(productCart);
-
 
 let cartContent = document.getElementById("cart__items");
 let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
@@ -12,16 +8,19 @@ const urlGet = "http://localhost:3000/api/products/";
 
 const getProducts = async () => {
   await fetch(urlGet) // url d'où sont appelées les données (product.js)
-    .then((response) => response.json())
-    .then((data) => (allProduct = data)) // acquisition des données de l'API
-    .catch((error) => {
-      alert("Problème avec fetch : " + error.message);
-    });
+  .then((response) => response.json())
+  .then((data) => (allProduct = data)) // acquisition des données de l'API
+  .catch((error) => {
+    alert("Problème avec fetch : " + error.message);
+  });
 };
 // const data = getPriceAndId(urlGet).then((value) => console.log(value));
 const getGlobalArray = async () => {
   await getProducts();
-
+  let productCart = JSON.parse(localStorage.getItem("products"));
+  productCart.sort((a, b) => a.id - b.id);
+  console.log(productCart);
+  
   // Récupération de l'ID et du prix du tableau de l'API
   const apiArray = allProduct.map((items) => ({ 
     id: items._id,
@@ -34,10 +33,8 @@ const getGlobalArray = async () => {
     const product = apiArray.find((product) => items.id === product.id);
     return { ...items, product };
   });
-  
   console.log(finalArray);
-  console.log(finalArray[0].product.price);
-  console.log(productCart);
+
 
   finalArray.map((product) => {
     cartContentInstanciated =
@@ -93,9 +90,11 @@ function changeQuantity() {
       for (k = 0; k < finalArray.length; k += 1) {
         if (
           finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
-          finalArray[k].colors === event.target.dataset.color
+          finalArray[k].colors === event.target.dataset.color &&
+          finalArray[k].product.price != undefined
         ) {
           finalArray[k].localQuantity = event.target.value;
+          finalArray.splice([k], -1);
           localStorage.setItem("products", JSON.stringify(productCart));
           totalQuantity();
           totalPrice();
@@ -113,10 +112,12 @@ function deleteCartProduct() {
     btn.addEventListener("click", (e) => {
       for (l = 0; productCart.length; l += 1) {
         if (
-          productCart[l].id === e.target.dataset.id &&
-          productCart[l].colors === e.target.dataset.color
+          finalArray[l].id === e.target.dataset.id &&
+          finalArray[l].colors === e.target.dataset.color && 
+          finalArray[l].product.price != undefined
         ) {
-          productCart.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
+          finalArray.splice([l], 1);
+          finalArray.splice([l], -1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
           localStorage.setItem("products", JSON.stringify(productCart));
           alert("Votre article a bien été supprimé ! Merci.");
           // setCartcontent();
