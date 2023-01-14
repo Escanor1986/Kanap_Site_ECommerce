@@ -56,7 +56,6 @@ addToCartBtn.addEventListener("click", () => {
   let productCart = {
     id: id,
     name: product.name,
-    price: NaN,
     localQuantity: parseInt(productNumber, 10),
     colors: productColor,
     imageUrl: product.imageUrl,
@@ -96,28 +95,3 @@ addToCartBtn.addEventListener("click", () => {
   }
 });
 
-
-
-// Merge JavaScript objects with the same key value and count them
-
-  // let globalArray = [...apiArray, ...productCart];
-  // console.log(globalArray);
-
-  // const combinedItems = (globalArray = []) => {
-  //   const mergeGlobalArray = globalArray.reduce((acc, obj) => {
-  //     let found = false;
-  //     for (let i = 0; i < acc.length; i++) {
-  //       if (acc[i].id === obj.id) {
-  //         found = true;
-  //         acc[i].count++;
-  //       }
-  //     }
-  //     if (!found) {
-  //       obj.count = 1;
-  //       acc.push(obj);
-  //     }
-  //     return acc;
-  //   }, []);
-  //   return mergeGlobalArray;
-  // };
-  // console.log(combinedItems(globalArray));

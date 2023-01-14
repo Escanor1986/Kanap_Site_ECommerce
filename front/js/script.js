@@ -30,7 +30,6 @@ const displayKanap = async () => {
 
   // Tri croissant du tableau de produit par prix
   allProduct.sort((c, d) => c.price - d.price);
-  console.log(allProduct);
   // on itère sur le tableau avec la boucle map pour insertion dynamique dans le DOM
   allProduct.map((product) => {
 

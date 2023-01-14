@@ -1,7 +1,5 @@
 let productCart = JSON.parse(localStorage.getItem("products"));
 productCart.sort((a, b) => a.id - b.id);
-console.log(productCart);
-
 
 let cartContent = document.getElementById("cart__items");
 let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
@@ -29,6 +27,9 @@ const getGlobalArray = async () => {
   }));
   apiArray.sort((a, b) => a.id - b.id); // triage du tableau par ID
 
+  console.log(apiArray);
+  console.log(productCart);
+
   // fusion du tableau de l'API et du localStorage sur base de l'ID en référence
   const finalArray = productCart.map((items) => { 
     const product = apiArray.find((product) => items.id === product.id);
@@ -37,7 +38,6 @@ const getGlobalArray = async () => {
   
   console.log(finalArray);
   console.log(finalArray[0].product.price);
-  console.log(productCart);
 
   finalArray.map((product) => {
     cartContentInstanciated =
@@ -55,7 +55,7 @@ const getGlobalArray = async () => {
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
           <p>Qté : </p>
-          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
+          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.quantity}">
         </div>
         <div class="cart__item__content__settings__delete">
           <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
@@ -69,7 +69,7 @@ const getGlobalArray = async () => {
 
 function totalPrice() {
   const total = finalArray.reduce(
-    (acc, value) => (acc += value.product.price * value.localQuantity),
+    (acc, value) => (acc += value.product.price * value.quantity),
     0
   );
   totalPriceValue.innerHTML = total;
@@ -80,7 +80,7 @@ function totalQuantity() {
   let sum = 0;
   for (let j = 0; j < finalArray.length; j += 1) {
     // console.log(productCart);
-    sum = sum + parseInt(finalArray[j].localQuantity);
+    sum = sum + parseInt(finalArray[j].quantity);
   }
   totalQuantityCart.innerHTML = sum;
 }
@@ -90,17 +90,17 @@ function changeQuantity() {
   document.querySelectorAll(".itemQuantity").forEach((change) => {
     change.addEventListener("change", (event) => {
       // eventlistener reprend les caractéristiques de la balise html ciblée
-      for (k = 0; k < finalArray.length; k += 1) {
+      for (k = 0; k < productCart.length; k += 1) {
         if (
-          finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
-          finalArray[k].colors === event.target.dataset.color
+          productCart[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
+          productCart[k].colors === event.target.dataset.color
         ) {
-          finalArray[k].localQuantity = event.target.value;
+          productCart[k].quantity = event.target.value;
           localStorage.setItem("products", JSON.stringify(productCart));
           totalQuantity();
           totalPrice();
           // location.reload();
-          console.log(finalArray);
+          console.log(productCart);
         }
       }
     });
