@@ -1,40 +1,40 @@
+let productCart = JSON.parse(localStorage.getItem("products"));
+productCart.sort((a, b) => a.id - b.id);
+console.log(productCart);
 
 let cartContent = document.getElementById("cart__items");
 let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
+let allProduct = [];
 
 const urlGet = "http://localhost:3000/api/products/";
 
 const getProducts = async () => {
   await fetch(urlGet) // url d'où sont appelées les données (product.js)
-  .then((response) => response.json())
-  .then((data) => (allProduct = data)) // acquisition des données de l'API
-  .catch((error) => {
-    alert("Problème avec fetch : " + error.message);
-  });
+    .then((response) => response.json())
+    .then((data) => (allProduct = data)) // acquisition des données de l'API
+    .catch((error) => {
+      alert("Problème avec fetch : " + error.message);
+    });
 };
 // const data = getPriceAndId(urlGet).then((value) => console.log(value));
 const getGlobalArray = async () => {
   await getProducts();
-  let productCart = JSON.parse(localStorage.getItem("products"));
-  productCart.sort((a, b) => a.id - b.id);
-  console.log(productCart);
-  
-  // Récupération de l'ID et du prix du tableau de l'API
-  const apiArray = allProduct.map((items) => ({ 
+
+  // Récupération de l'ID et du prix depuis le tableau de l'API
+  const apiArray = allProduct.map((items) => ({
     id: items._id,
     price: items.price,
   }));
   apiArray.sort((a, b) => a.id - b.id); // triage du tableau par ID
 
   // fusion du tableau de l'API et du localStorage sur base de l'ID en référence
-  const finalArray = productCart.map((items) => { 
+  const finalArray = productCart.map((items) => {
     const product = apiArray.find((product) => items.id === product.id);
     return { ...items, product };
   });
   console.log(finalArray);
-
 
   finalArray.map((product) => {
     cartContentInstanciated =
@@ -64,77 +64,74 @@ const getGlobalArray = async () => {
     cartContent.innerHTML = cartContentInstanciated;
   });
 
-function totalPrice() {
-  const total = finalArray.reduce(
-    (acc, value) => (acc += value.product.price * value.localQuantity),
-    0
-  );
-  totalPriceValue.innerHTML = total;
-}
-totalPrice()
-
-function totalQuantity() {
-  let sum = 0;
-  for (let j = 0; j < finalArray.length; j += 1) {
-    // console.log(productCart);
-    sum = sum + parseInt(finalArray[j].localQuantity);
+  function totalPrice() {
+    const total = finalArray.reduce(
+      (acc, value) => (acc += value.product.price * value.localQuantity),
+      0
+    );
+    totalPriceValue.innerHTML = total;
   }
-  totalQuantityCart.innerHTML = sum;
-}
-totalQuantity()
+  totalPrice();
 
-function changeQuantity() {
-  document.querySelectorAll(".itemQuantity").forEach((change) => {
-    change.addEventListener("change", (event) => {
-      // eventlistener reprend les caractéristiques de la balise html ciblée
-      for (k = 0; k < finalArray.length; k += 1) {
-        if (
-          finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
-          finalArray[k].colors === event.target.dataset.color &&
-          finalArray[k].product.price != undefined
-        ) {
-          finalArray[k].localQuantity = event.target.value;
-          finalArray.splice([k], -1);
-          localStorage.setItem("products", JSON.stringify(productCart));
-          totalQuantity();
-          totalPrice();
-          // location.reload();
-          console.log(finalArray);
-        }
-      }
-    });
-  });
-}
-changeQuantity();
+  function totalQuantity() {
+    let sum = 0;
+    for (let j = 0; j < finalArray.length; j += 1) {
+      // console.log(productCart);
+      sum = sum + parseInt(finalArray[j].localQuantity);
+    }
+    totalQuantityCart.innerHTML = sum;
+  }
+  totalQuantity();
+  
+  console.log(productCart);
 
-function deleteCartProduct() {
-  document.querySelectorAll(".deleteItem").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      for (l = 0; productCart.length; l += 1) {
-        if (
-          finalArray[l].id === e.target.dataset.id &&
-          finalArray[l].colors === e.target.dataset.color && 
-          finalArray[l].product.price != undefined
-        ) {
-          finalArray.splice([l], 1);
-          finalArray.splice([l], -1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
-          localStorage.setItem("products", JSON.stringify(productCart));
-          alert("Votre article a bien été supprimé ! Merci.");
-          // setCartcontent();
-          location.reload();
-          if (productCart.length === 0) {
-            localStorage.clear();
+  function changeQuantity() {
+    document.querySelectorAll(".itemQuantity").forEach((change) => {
+      change.addEventListener("change", (event) => {
+        // eventlistener reprend les caractéristiques de la balise html ciblée
+        for (let k = 0; k < finalArray.length; k += 1) {
+          if (
+            finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
+            finalArray[k].colors === event.target.dataset.color
+          ) {
+            finalArray[k].localQuantity = event.target.value;
+            // à ce niveau le prix est toujours présent
+            localStorage.setItem("products", JSON.stringify(productCart));
+            totalQuantity();
+            totalPrice();
+            // location.reload();
+            console.log(finalArray);
           }
         }
-      }
+      });
     });
-  });
-}
-deleteCartProduct();
+  }
+  changeQuantity();
+
+  function deleteCartProduct() {
+    document.querySelectorAll(".deleteItem").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        for (let l = 0; productCart.length; l += 1) {
+          if (
+            finalArray[l].id === e.target.dataset.id &&
+            finalArray[l].colors === e.target.dataset.color
+          ) {
+            finalArray.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
+            localStorage.setItem("products", JSON.stringify(productCart));
+            alert("Votre article a bien été supprimé ! Merci.");
+            // setCartcontent();
+            location.reload();
+            if (productCart.length === 0) {
+              localStorage.clear();
+            }
+          }
+        }
+      });
+    });
+  }
+  deleteCartProduct();
 };
 getGlobalArray();
-
-  
 
 let form = document.querySelector(".cart__order__form");
 
