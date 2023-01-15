@@ -33,7 +33,6 @@ const displayKanap = async () => {
   // on itère sur le tableau avec la boucle map pour insertion dynamique dans le DOM
   allProduct.map((product) => {
 
-    console.log(product._id);
     // Création & implémentation dans le DOM du tag "link" du produit récupéré de l'API
     const link = document.createElement("a");
     document.getElementById("items").appendChild(link);

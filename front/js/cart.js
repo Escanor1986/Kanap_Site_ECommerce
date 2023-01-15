@@ -1,14 +1,14 @@
 let productsCart = JSON.parse(localStorage.getItem("products"));
 let apiProducts = [];
 
-let cartContent = document.getElementById("cart__items"); // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
+let cartContent = document.getElementById("cart__items"); 
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
 const urlGet = "http://localhost:3000/api/products/";
 
 const getProducts = async () => {
-  await fetch(urlGet) // url d'où sont appelées les données (product.js)
+  await fetch(urlGet)
     .then((response) => response.json())
     .then((datas) => {
       if (productsCart) {
@@ -21,12 +21,11 @@ const getProducts = async () => {
         refreshDOM();
         updateTotalsDOM();
       }
-    }) // acquisition des données de l'API
+    })
     .catch((error) => {
       alert("Problème avec fetch 1 : " + error.message);
     });
 };
-
 
 const refreshDOM = () => {
   cartContent.innerHTML = "";
@@ -61,7 +60,6 @@ const refreshDOM = () => {
     const itemQuantityElement = article.querySelector('.itemQuantity');
     if (itemQuantityElement) {
       itemQuantityElement.addEventListener('change', (event) => {
-        console.log('test');
         productsCart = productsCart.map((productCart) => {
           if (
             productCart.id === product.id &&
@@ -129,7 +127,7 @@ let emailRegExp = new RegExp(
   "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
 );
 let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-let addressRegExp = new RegExp( // a changé pour mettre le numéro où on le souhaite dans l'adresse
+let addressRegExp = new RegExp( 
   "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
 );
 const regexpData = [
@@ -254,7 +252,7 @@ const order = document.getElementById("order");
 
 function postForm() {
   order.addEventListener("submit", async (eventOrder) => {
-    eventOrder.preventDefault(); // annule l'envoi du formulaire au "click"
+    eventOrder.preventDefault();
     if (productsCart) {
       if (
         !(
@@ -276,22 +274,15 @@ function postForm() {
         email: document.getElementById("email").value,
       };
       let products = productsCart.map((productCart) => { return productCart.id });
-      console.log(JSON.stringify([contact, products]));
-      /*for (let m = 0; m < productsCart.length; m += 1) {
-        products.push(productCart[m].id);
-      }*/
 
       const options = {
         method: "POST",
-        body: JSON.stringify({contact, products}), // sendFormData est bien composé de contact & products
+        body: JSON.stringify({contact, products}),
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
       };
-      // Dans le cadre du fecth ci-dessous, veiller à bien utiliser le nom d'objet "contact" et
-      // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas
-      // être transmises. Raison pour laquelle "id" était "undifined" sur la page confirmation.
 
       const response = await fetch(
         "http://localhost:3000/api/products/order",
@@ -301,18 +292,15 @@ function postForm() {
           if (response.ok) {
             return response.json();
           } else {
-            console.log(response);
             throw new Error(response.statusMessage);
           }
         })
         .then((data) => {
-          console.log(data);
           localStorage.setItem("orderId", data.orderId);
           alert("Votre commande n° "+data.orderId+" est en cours de validation.");
           document.location.href = "confirmation.html?id=" + data.orderId;
         })
         .catch((err) => {
-          // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
           alert("Problème avec fetch : " + err.message);
         });
     } else {

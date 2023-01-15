@@ -61,7 +61,6 @@ addToCartBtn.addEventListener("click", () => {
     imageUrl: product.imageUrl,
     description: product.description
   };
-  console.log(productCart);
   if (localStorage.getItem("products")) {
     // cas où il y a déjà quelque chose dans le localStorage
     productFinalCart = JSON.parse(localStorage.getItem("products"));
