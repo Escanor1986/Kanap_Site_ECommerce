@@ -1,137 +1,127 @@
-let productCart = JSON.parse(localStorage.getItem("products"));
-productCart.sort((a, b) => a.id - b.id);
-console.log(productCart);
+let productsCart = JSON.parse(localStorage.getItem("products"));
+let apiProducts = [];
 
-let cartContent = document.getElementById("cart__items");
-let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
+let cartContent = document.getElementById("cart__items"); // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
-let allProduct = [];
 
 const urlGet = "http://localhost:3000/api/products/";
 
 const getProducts = async () => {
   await fetch(urlGet) // url d'où sont appelées les données (product.js)
     .then((response) => response.json())
-    .then((data) => (allProduct = data)) // acquisition des données de l'API
+    .then((datas) => {
+      if (productsCart) {
+        datas.forEach((data) => {
+          const product = productsCart.find((productCart) => productCart.id === data._id);
+          if (product) {
+            apiProducts.push({...product, price: data.price});
+          }
+        })
+        refreshDOM();
+        updateTotalsDOM();
+      }
+    }) // acquisition des données de l'API
     .catch((error) => {
-      alert("Problème avec fetch : " + error.message);
+      alert("Problème avec fetch 1 : " + error.message);
     });
 };
-// const data = getPriceAndId(urlGet).then((value) => console.log(value));
-const getGlobalArray = async () => {
-  await getProducts();
 
-  // Récupération de l'ID et du prix depuis le tableau de l'API
-  const apiArray = allProduct.map((items) => ({
-    id: items._id,
-    price: items.price,
-  }));
-  apiArray.sort((a, b) => a.id - b.id); // triage du tableau par ID
 
-  // fusion du tableau de l'API et du localStorage sur base de l'ID en référence
-  const finalArray = productCart.map((items) => {
-    const product = apiArray.find((product) => items.id === product.id);
-    return { ...items, product };
-  });
-  console.log(finalArray);
+const refreshDOM = () => {
+  cartContent.innerHTML = "";
+  productsCart.map((product) => {
+    const article = document.createElement('article');
+    article.innerHTML =
+        `<div class="cart__item__img">
+            <img src="${product.imageUrl}" alt="${product.altTxt}">
+          </div>
+          <div class="cart__item__content">
+            <div class="cart__item__content__description">
+              <h2>${product.name}</h2>
+              <p>${product.colors}</p>
+              <p>${apiProducts.find((apiProduct) => apiProduct.id === product.id).price} €</p>
+            </div>
+            <div class="cart__item__content__settings">
+              <div class="cart__item__content__settings__quantity">
+                <p>Qté : </p>
+                <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
+              </div>
+              <div class="cart__item__content__settings__delete">
+                <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
+              </div>
+            </div>
+          </div>
+      `;
+    article.className = "cart__item";
+    article.dataset.id = product.id;
+    article.dataset.color = product.colors;
+    cartContent.append(article);
 
-  finalArray.map((product) => {
-    cartContentInstanciated =
-      cartContentInstanciated +
-      `<article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
-    <div class="cart__item__img">
-      <img src="${product.imageUrl}" alt="${product.altTxt}">
-    </div>
-    <div class="cart__item__content">
-      <div class="cart__item__content__description">
-        <h2>${product.name}</h2>
-        <p>${product.colors}</p>
-        <p>${product.product.price}</p>
-      </div>
-      <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-          <p>Qté : </p>
-          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
-        </div>
-        <div class="cart__item__content__settings__delete">
-          <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
-        </div>
-      </div>
-    </div>
-  </article>
-`;
-    cartContent.innerHTML = cartContentInstanciated;
-  });
+    const itemQuantityElement = article.querySelector('.itemQuantity');
+    if (itemQuantityElement) {
+      itemQuantityElement.addEventListener('change', (event) => {
+        console.log('test');
+        productsCart = productsCart.map((productCart) => {
+          if (
+            productCart.id === product.id &&
+            productCart.colors === product.colors) {
+            return {...productCart, localQuantity: parseInt(event.target.value)}
+          } else {
+            return productCart;
+          }
+        });
 
-  function totalPrice() {
-    const total = finalArray.reduce(
-      (acc, value) => (acc += value.product.price * value.localQuantity),
-      0
-    );
-    totalPriceValue.innerHTML = total;
-  }
-  totalPrice();
+        apiProducts = apiProducts.map((apiProduct) => {
+          if (
+            apiProduct.id === product.id &&
+            apiProduct.colors === product.colors) {
+            return {...apiProduct, localQuantity: parseInt(event.target.value)}
+          } else {
+            return apiProduct;
+          }
+        });
 
-  function totalQuantity() {
-    let sum = 0;
-    for (let j = 0; j < finalArray.length; j += 1) {
-      // console.log(productCart);
-      sum = sum + parseInt(finalArray[j].localQuantity);
+        localStorage.setItem('products', JSON.stringify(productsCart));
+        updateTotalsDOM();
+      });
     }
-    totalQuantityCart.innerHTML = sum;
-  }
-  totalQuantity();
-  
-  console.log(productCart);
 
-  function changeQuantity() {
-    document.querySelectorAll(".itemQuantity").forEach((change) => {
-      change.addEventListener("change", (event) => {
-        // eventlistener reprend les caractéristiques de la balise html ciblée
-        for (let k = 0; k < finalArray.length; k += 1) {
-          if (
-            finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
-            finalArray[k].colors === event.target.dataset.color
-          ) {
-            finalArray[k].localQuantity = event.target.value;
-            // à ce niveau le prix est toujours présent
-            localStorage.setItem("products", JSON.stringify(productCart));
-            totalQuantity();
-            totalPrice();
-            // location.reload();
-            console.log(finalArray);
-          }
-        }
+    const itemDeleteElement = article.querySelector('.deleteItem');
+    if (itemDeleteElement) {
+      itemDeleteElement.addEventListener('click', () => {
+        productsCart = productsCart.filter((productCart) => {
+          return productCart.id !== product.id ||
+          (productCart.id === product.id && productCart.colors !== product.colors)
+        });
+        localStorage.setItem('products', JSON.stringify(productsCart));
+        apiProducts = apiProducts.filter((apiProduct) => {
+          return apiProduct.id !== product.id ||
+            (apiProduct.id === product.id && apiProduct.colors !== product.colors)
+        });
+        refreshDOM();
+        updateTotalsDOM();
       });
-    });
-  }
-  changeQuantity();
+    }
 
-  function deleteCartProduct() {
-    document.querySelectorAll(".deleteItem").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        for (let l = 0; productCart.length; l += 1) {
-          if (
-            finalArray[l].id === e.target.dataset.id &&
-            finalArray[l].colors === e.target.dataset.color
-          ) {
-            finalArray.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
-            localStorage.setItem("products", JSON.stringify(productCart));
-            alert("Votre article a bien été supprimé ! Merci.");
-            // setCartcontent();
-            location.reload();
-            if (productCart.length === 0) {
-              localStorage.clear();
-            }
-          }
-        }
-      });
-    });
-  }
-  deleteCartProduct();
+  });
+
 };
-getGlobalArray();
+
+const updateTotalsDOM = () => {
+  let totalPrice = 0;
+  let totalQuantity = 0;
+
+  productsCart.forEach((productCart) => {
+    const apiProduct = apiProducts.find((apiProduct) => apiProduct.id === productCart.id);
+    totalPrice += productCart.localQuantity * apiProduct.price;
+    totalQuantity += productCart.localQuantity;
+  });
+  totalPriceValue.innerHTML = totalPrice;
+  totalQuantityCart.innerHTML = totalQuantity;
+};
+
+(async () => await getProducts())();
 
 let form = document.querySelector(".cart__order__form");
 
@@ -263,63 +253,109 @@ function validForm({ index, validation }) {
 const order = document.getElementById("order");
 
 function postForm() {
-  order.addEventListener("click", async (eventOrder) => {
+  order.addEventListener("submit", async (eventOrder) => {
     eventOrder.preventDefault(); // annule l'envoi du formulaire au "click"
-    if (
-      !(
-        firstNameValidation() &&
-        lastNameValidation() &&
-        addressValidation() &&
-        cityValidation() &&
-        emailValidation()
+    if (productsCart) {
+      if (
+        !(
+          firstNameValidation() &&
+          lastNameValidation() &&
+          addressValidation() &&
+          cityValidation() &&
+          emailValidation()
+        )
+      ) {
+        alert("Veuillez remplir tout les champs correctement !");
+        return;
+      }
+      const contact = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        address: document.getElementById("address").value,
+        city: document.getElementById("city").value,
+        email: document.getElementById("email").value,
+      };
+      let products = productsCart.map((productCart) => { return productCart.id });
+      console.log(JSON.stringify([contact, products]));
+      /*for (let m = 0; m < productsCart.length; m += 1) {
+        products.push(productCart[m].id);
+      }*/
+
+      const options = {
+        method: "POST",
+        body: JSON.stringify({contact, products}), // sendFormData est bien composé de contact & products
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+      // Dans le cadre du fecth ci-dessous, veiller à bien utiliser le nom d'objet "contact" et
+      // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas
+      // être transmises. Raison pour laquelle "id" était "undifined" sur la page confirmation.
+
+      const response = await fetch(
+        "http://localhost:3000/api/products/order",
+        options
       )
-    ) {
-      alert("Veuillez remplir tout les champs correctement !");
-      return;
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            console.log(response);
+            throw new Error(response.statusMessage);
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          localStorage.setItem("orderId", data.orderId);
+          alert("Votre commande n° "+data.orderId+" est en cours de validation.");
+          document.location.href = "confirmation.html?id=" + data.orderId;
+        })
+        .catch((err) => {
+          // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
+          alert("Problème avec fetch : " + err.message);
+        });
+    } else {
+      alert("Veuillez ajouter des produits au panier");
     }
-    const contact = {
-      firstName: document.getElementById("firstName").value,
-      lastName: document.getElementById("lastName").value,
-      address: document.getElementById("address").value,
-      city: document.getElementById("city").value,
-      email: document.getElementById("email").value,
-    };
-    let products = [];
-    for (let m = 0; m < productCart.length; m += 1) {
-      products.push(productCart[m].id);
-    }
-    const sendFormData = {
-      contact, // contact me renvoie bien "contact" avec ses éléments
-      products, // products me renvoie bien l'id des objets de la commande
-    };
-    const options = {
-      method: "POST",
-      body: JSON.stringify(sendFormData), // sendFormData est bien composé de contact & products
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
-      },
-    };
-    // Dans le cadre du fecth ci-dessous, veiller à bien utiliser le nom d'objet "contact" et
-    // de tableau "products" attendu par le back-end, sans quoi les informations ne semblent pas
-    // être transmises. Raison pour laquelle "id" était "undifined" sur la page confirmation.
-
-    let response = await fetch(
-      "http://localhost:3000/api/products/order",
-      options
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem("orderId", data.orderId);
-        document.location.href = "confirmation.html?id=" + data.orderId;
-      })
-      .catch((err) => {
-        // on constate que si l'URL n'est pas bonne, le message d'alerte est bien envoyé
-        alert("Problème avec fetch : " + err.message);
-      });
-
-    let result = await response.json();
-    alert(result.message + data.orderId);
   });
 }
 postForm();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

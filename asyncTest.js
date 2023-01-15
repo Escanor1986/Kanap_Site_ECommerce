@@ -1,5 +1,12 @@
 let productCart = JSON.parse(localStorage.getItem("products"));
 productCart.sort((a, b) => a.id - b.id);
+console.log(productCart);
+
+let cartContent = document.getElementById("cart__items");
+let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
+let totalPriceValue = document.querySelector("#totalPrice");
+let totalQuantityCart = document.querySelector("#totalQuantity");
+let allProduct = [];
 
 const urlGet = "http://localhost:3000/api/products/";
 
@@ -15,32 +22,19 @@ const getProducts = async () => {
 const getGlobalArray = async () => {
   await getProducts();
 
-  // Récupération de l'ID et du prix du tableau de l'API
-  const apiArray = allProduct.map((items) => ({ 
+  // Récupération de l'ID et du prix depuis le tableau de l'API
+  const apiArray = allProduct.map((items) => ({
     id: items._id,
     price: items.price,
   }));
   apiArray.sort((a, b) => a.id - b.id); // triage du tableau par ID
 
-  console.log(apiArray);
-  console.log(productCart);
-
-  // Converting an array of objects to a single object keyed by id
-  const finalArray = productCart.map((items) => { 
+  // fusion du tableau de l'API et du localStorage sur base de l'ID en référence
+  const finalArray = productCart.map((items) => {
     const product = apiArray.find((product) => items.id === product.id);
     return { ...items, product };
   });
-  
   console.log(finalArray);
-  console.log(finalArray[0].product.price);
-  return finalArray;
-};
-
-let cartContent = document.getElementById("cart__items");
-let cartContentInstanciated = cartContent.innerHTML; // initialisation anticipée pour éviter un "undifined" avant le premier objet affiché !
-
-async function setCartcontent() {
-  await getGlobalArray();
 
   finalArray.map((product) => {
     cartContentInstanciated =
@@ -53,12 +47,12 @@ async function setCartcontent() {
       <div class="cart__item__content__description">
         <h2>${product.name}</h2>
         <p>${product.colors}</p>
-        <p></p>
+        <p>${product.product.price}</p>
       </div>
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
           <p>Qté : </p>
-          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+          <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
         </div>
         <div class="cart__item__content__settings__delete">
           <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
@@ -69,76 +63,75 @@ async function setCartcontent() {
 `;
     cartContent.innerHTML = cartContentInstanciated;
   });
-};
-setCartcontent();
 
-let totalPriceValue = document.querySelector("#totalPrice");
-let totalQuantityCart = document.querySelector("#totalQuantity");
-
-function totalPrice() {
-  let productCart = JSON.parse(localStorage.getItem("products"));
-
-  const total = productCart.reduce(
-    (acc, value) => (acc += value.price * value.quantity),
-    0
-  );
-  totalPriceValue.innerHTML = total;
-}
-
-function totalQuantity() {
-  let sum = 0;
-  productCart = JSON.parse(localStorage.getItem("products"));
-  for (let j = 0; j < productCart.length; j += 1) {
-    // console.log(productCart);
-    sum = sum + parseInt(productCart[j].quantity);
+  function totalPrice() {
+    const total = finalArray.reduce(
+      (acc, value) => (acc += value.product.price * value.localQuantity),
+      0
+    );
+    totalPriceValue.innerHTML = total;
   }
-  totalQuantityCart.innerHTML = sum;
-}
+  totalPrice();
 
-function changeQuantity() {
-  document.querySelectorAll(".itemQuantity").forEach((change) => {
-    change.addEventListener("change", (event) => {
-      // eventlistener reprend les caractéristiques de la balise html ciblée
-      for (k = 0; k < productCart.length; k += 1) {
-        if (
-          productCart[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
-          productCart[k].colors === event.target.dataset.color
-        ) {
-          productCart[k].quantity = event.target.value;
-          localStorage.setItem("products", JSON.stringify(productCart));
-          totalQuantity();
-          totalPrice();
-          // location.reload();
-          console.log(productCart);
-        }
-      }
-    });
-  });
-}
-changeQuantity();
+  function totalQuantity() {
+    let sum = 0;
+    for (let j = 0; j < finalArray.length; j += 1) {
+      // console.log(productCart);
+      sum = sum + parseInt(finalArray[j].localQuantity);
+    }
+    totalQuantityCart.innerHTML = sum;
+  }
+  totalQuantity();
+  
+  console.log(productCart);
 
-function deleteCartProduct() {
-  document.querySelectorAll(".deleteItem").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      for (l = 0; productCart.length; l += 1) {
-        if (
-          productCart[l].id === e.target.dataset.id &&
-          productCart[l].colors === e.target.dataset.color
-        ) {
-          productCart.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
-          localStorage.setItem("products", JSON.stringify(productCart));
-          alert("Votre article a bien été supprimé ! Merci.");
-          // setCartcontent();
-          location.reload();
-          if (productCart.length === 0) {
-            localStorage.clear();
+  function changeQuantity() {
+    document.querySelectorAll(".itemQuantity").forEach((change) => {
+      change.addEventListener("change", (event) => {
+        // eventlistener reprend les caractéristiques de la balise html ciblée
+        for (let k = 0; k < finalArray.length; k += 1) {
+          if (
+            finalArray[k].id === event.target.dataset.id && // dataset == identifiant d'élément html
+            finalArray[k].colors === event.target.dataset.color
+          ) {
+            finalArray[k].localQuantity = event.target.value;
+            // à ce niveau le prix est toujours présent
+            localStorage.setItem("products", JSON.stringify(productCart));
+            totalQuantity();
+            totalPrice();
+            // location.reload();
+            console.log(finalArray);
           }
         }
-      }
+      });
     });
-  });
-}
-deleteCartProduct();
+  }
+  changeQuantity();
+
+  function deleteCartProduct() {
+    document.querySelectorAll(".deleteItem").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        for (let l = 0; productCart.length; l += 1) {
+          if (
+            finalArray[l].id === e.target.dataset.id &&
+            finalArray[l].colors === e.target.dataset.color
+          ) {
+            finalArray.splice([l], 1); // Débuggage --> corchets uniquement autour du "l" et non autour de [(l, 1)] !
+            localStorage.setItem("products", JSON.stringify(productCart));
+            alert("Votre article a bien été supprimé ! Merci.");
+            // setCartcontent();
+            location.reload();
+            if (productCart.length === 0) {
+              localStorage.clear();
+            }
+          }
+        }
+      });
+    });
+  }
+  deleteCartProduct();
+};
+getGlobalArray();
 
 let form = document.querySelector(".cart__order__form");
 
@@ -330,5 +323,3 @@ function postForm() {
   });
 }
 postForm();
-totalPrice();
-totalQuantity();

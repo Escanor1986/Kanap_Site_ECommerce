@@ -325,3 +325,15 @@ function postForm() {
   });
 }
 postForm();
+
+
+
+
+for (let l = productCart.length - 1; l >= 0; l -= 1) {
+  if (productCart[l].product.price !== undefined) {
+    productCart[l].splice([k], -1);
+  }
+}
+
+
+
