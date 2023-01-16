@@ -19,6 +19,7 @@ const getProducts = async () => {
             (productCart) => productCart.id === data._id
           );
           // Push de l'ID du localStorage dans les données de l'API
+          // Si présence d'un produit dans le localStorage
           if (product) {
             apiProducts.push({ ...product, price: data.price });
           }
