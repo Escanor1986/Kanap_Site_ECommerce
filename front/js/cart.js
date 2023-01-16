@@ -1,23 +1,29 @@
 let productsCart = JSON.parse(localStorage.getItem("products"));
 let apiProducts = [];
 
-let cartContent = document.getElementById("cart__items"); 
+let cartContent = document.getElementById("cart__items");
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
 const urlGet = "http://localhost:3000/api/products/";
 
+// récupération des données de l'API
 const getProducts = async () => {
   await fetch(urlGet)
     .then((response) => response.json())
     .then((datas) => {
       if (productsCart) {
         datas.forEach((data) => {
-          const product = productsCart.find((productCart) => productCart.id === data._id);
+          // Récupération de l'ID dans le localStorage
+          const product = productsCart.find(
+            (productCart) => productCart.id === data._id
+          );
+          // Push de l'ID du localStorage dans les données de l'API
           if (product) {
-            apiProducts.push({...product, price: data.price});
+            apiProducts.push({ ...product, price: data.price });
           }
-        })
+        });
+        // Refresh du dom lors de la suppression d'un produit ou de sa modification
         refreshDOM();
         updateTotalsDOM();
       }
@@ -27,27 +33,36 @@ const getProducts = async () => {
     });
 };
 
+// implémentation du DOM
 const refreshDOM = () => {
   cartContent.innerHTML = "";
   productsCart.map((product) => {
-    const article = document.createElement('article');
-    article.innerHTML =
-        `<div class="cart__item__img">
+    const article = document.createElement("article");
+    article.innerHTML = `<div class="cart__item__img">
             <img src="${product.imageUrl}" alt="${product.altTxt}">
           </div>
           <div class="cart__item__content">
             <div class="cart__item__content__description">
               <h2>${product.name}</h2>
               <p>${product.colors}</p>
-              <p>${apiProducts.find((apiProduct) => apiProduct.id === product.id).price} €</p>
+              <p>${
+                apiProducts.find((apiProduct) => apiProduct.id === product.id)
+                  .price // Récupération du prix correspondant au localStorage dans l'API
+              } €</p>
             </div>
             <div class="cart__item__content__settings">
               <div class="cart__item__content__settings__quantity">
                 <p>Qté : </p>
-                <input type="number" class="itemQuantity" data-id="${product.id}" data-color="${product.colors}" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
+                <input type="number" class="itemQuantity" data-id="${
+                  product.id
+                }" data-color="${
+      product.colors
+    }" name="itemQuantity" min="1" max="100" value="${product.localQuantity}">
               </div>
               <div class="cart__item__content__settings__delete">
-                <p class="deleteItem" data-id="${product.id}" data-color="${product.colors}">Supprimer</p>
+                <p class="deleteItem" data-id="${product.id}" data-color="${
+      product.colors
+    }">Supprimer</p>
               </div>
             </div>
           </div>
@@ -56,62 +71,79 @@ const refreshDOM = () => {
     article.dataset.id = product.id;
     article.dataset.color = product.colors;
     cartContent.append(article);
-
-    const itemQuantityElement = article.querySelector('.itemQuantity');
+    // Changement de la quantité d'objets dans le panier
+    const itemQuantityElement = article.querySelector(".itemQuantity");
     if (itemQuantityElement) {
-      itemQuantityElement.addEventListener('change', (event) => {
+      itemQuantityElement.addEventListener("change", (event) => {
+        // Changement de quantité dans le localStorage
         productsCart = productsCart.map((productCart) => {
           if (
             productCart.id === product.id &&
-            productCart.colors === product.colors) {
-            return {...productCart, localQuantity: parseInt(event.target.value)}
+            productCart.colors === product.colors
+          ) {
+            return {
+              ...productCart,
+              localQuantity: parseInt(event.target.value),
+            };
           } else {
             return productCart;
           }
         });
-
+        // Changement de quantité dans l'API
         apiProducts = apiProducts.map((apiProduct) => {
           if (
             apiProduct.id === product.id &&
-            apiProduct.colors === product.colors) {
-            return {...apiProduct, localQuantity: parseInt(event.target.value)}
+            apiProduct.colors === product.colors
+          ) {
+            return {
+              ...apiProduct,
+              localQuantity: parseInt(event.target.value),
+            };
           } else {
             return apiProduct;
           }
         });
-
-        localStorage.setItem('products', JSON.stringify(productsCart));
-        updateTotalsDOM();
+        // Mise à jour du localStorage
+        localStorage.setItem("products", JSON.stringify(productsCart));
+        // Mise à jour du prix et de la quantité totale
+        updateTotalsDOM(); 
       });
     }
-
-    const itemDeleteElement = article.querySelector('.deleteItem');
+    // suppresion d'un article au choix dans le DOM et dans le localStorage
+    const itemDeleteElement = article.querySelector(".deleteItem");
     if (itemDeleteElement) {
-      itemDeleteElement.addEventListener('click', () => {
+      itemDeleteElement.addEventListener("click", () => {
         productsCart = productsCart.filter((productCart) => {
-          return productCart.id !== product.id ||
-          (productCart.id === product.id && productCart.colors !== product.colors)
+          return (
+            productCart.id !== product.id ||
+            (productCart.id === product.id &&
+              productCart.colors !== product.colors)
+          );
         });
-        localStorage.setItem('products', JSON.stringify(productsCart));
+        localStorage.setItem("products", JSON.stringify(productsCart));
         apiProducts = apiProducts.filter((apiProduct) => {
-          return apiProduct.id !== product.id ||
-            (apiProduct.id === product.id && apiProduct.colors !== product.colors)
+          return (
+            apiProduct.id !== product.id ||
+            (apiProduct.id === product.id &&
+              apiProduct.colors !== product.colors)
+          );
         });
         refreshDOM();
         updateTotalsDOM();
       });
     }
-
   });
-
 };
 
+//update du prix et de la quantité
 const updateTotalsDOM = () => {
   let totalPrice = 0;
   let totalQuantity = 0;
 
   productsCart.forEach((productCart) => {
-    const apiProduct = apiProducts.find((apiProduct) => apiProduct.id === productCart.id);
+    const apiProduct = apiProducts.find(
+      (apiProduct) => apiProduct.id === productCart.id
+    );
     totalPrice += productCart.localQuantity * apiProduct.price;
     totalQuantity += productCart.localQuantity;
   });
@@ -119,6 +151,7 @@ const updateTotalsDOM = () => {
   totalQuantityCart.innerHTML = totalQuantity;
 };
 
+// fonction englobante "auto exécutrice"
 (async () => await getProducts())();
 
 let form = document.querySelector(".cart__order__form");
@@ -127,7 +160,7 @@ let emailRegExp = new RegExp(
   "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
 );
 let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-let addressRegExp = new RegExp( 
+let addressRegExp = new RegExp(
   "^[0-9]{1,3}(?:(?:[,. ]){1}[a-zA-Zàâäéèêëïîôöùûüç]+)+"
 );
 const regexpData = [
@@ -273,13 +306,15 @@ function postForm() {
         city: document.getElementById("city").value,
         email: document.getElementById("email").value,
       };
-      let products = productsCart.map((productCart) => { return productCart.id });
+      let products = productsCart.map((productCart) => {
+        return productCart.id;
+      });
 
       const options = {
         method: "POST",
-        body: JSON.stringify({contact, products}),
+        body: JSON.stringify({ contact, products }),
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
       };
@@ -297,7 +332,9 @@ function postForm() {
         })
         .then((data) => {
           localStorage.setItem("orderId", data.orderId);
-          alert("Votre commande n° "+data.orderId+" est en cours de validation.");
+          alert(
+            "Votre commande n° " + data.orderId + " est en cours de validation."
+          );
           document.location.href = "confirmation.html?id=" + data.orderId;
         })
         .catch((err) => {
@@ -309,41 +346,3 @@ function postForm() {
   });
 }
 postForm();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
