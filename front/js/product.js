@@ -1,6 +1,8 @@
 let parametres = new URL(document.location).searchParams;
 let id = parametres.get("id");
 const url = `http://localhost:3000/api/products/${id}`;
+console.log(url.toString()); 
+console.log(document.location); // retourne la chaîne de caractère dans la barre d'adresse/requête
 let product;
 
 // Call API per product ID

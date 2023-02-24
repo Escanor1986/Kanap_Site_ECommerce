@@ -107,7 +107,7 @@ const refreshDOM = () => {
         // Mise à jour du localStorage
         localStorage.setItem("products", JSON.stringify(productsCart));
         // Mise à jour du prix et de la quantité totale
-        updateTotalsDOM(); 
+        updateTotalsDOM();
       });
     }
     // suppresion d'un article au choix dans le DOM et dans le localStorage
