@@ -1,7 +1,7 @@
 let parametres = new URL(document.location).searchParams;
 let id = parametres.get("id");
 const url = `http://localhost:3000/api/products/${id}`;
-console.log(url.toString()); 
+console.log(url.toString());
 console.log(document.location); // retourne la chaîne de caractère dans la barre d'adresse/requête
 let product;
 
@@ -18,7 +18,7 @@ const fetchProduct = async () => {
 // Function showing product details
 const displayProductDetails = async () => {
   await fetchProduct();
-  
+
   const productImg = document.createElement("img");
   productImg.setAttribute("src", product.imageUrl);
   productImg.setAttribute("alt", product.altTxt);
@@ -42,13 +42,14 @@ const displayProductDetails = async () => {
 };
 
 displayProductDetails();
+
 const addToCartBtn = document.querySelector("#addToCart");
 addToCartBtn.addEventListener("click", () => {
   let productFinalCart = [];
 
   const productNumber = document.getElementById("quantity").value;
   const productColor = document.getElementById("colors").value;
-  
+
   if (productNumber === "0" || productColor === "") {
     alert(
       "Veuillez préciser la couleur et le nombre d'objets compris entre 1 et 100"
@@ -61,7 +62,7 @@ addToCartBtn.addEventListener("click", () => {
     localQuantity: parseInt(productNumber, 10),
     colors: productColor,
     imageUrl: product.imageUrl,
-    description: product.description
+    description: product.description,
   };
   if (localStorage.getItem("products")) {
     // cas où il y a déjà quelque chose dans le localStorage
@@ -95,4 +96,3 @@ addToCartBtn.addEventListener("click", () => {
     localStorage.setItem("products", JSON.stringify(productFinalCart, null, 3));
   }
 });
-

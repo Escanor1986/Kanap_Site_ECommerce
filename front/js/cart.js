@@ -7,29 +7,34 @@ let totalQuantityCart = document.querySelector("#totalQuantity");
 
 const urlGet = "http://localhost:3000/api/products/";
 
-// récupération des données de l'API
 const getProducts = async () => {
+  // Attente de la réponse de l'API fetch avant de continuer
   await fetch(urlGet)
-    .then((response) => response.json())
+    .then((response) => response.json()) // Convertion de la réponse en format JSON
     .then((datas) => {
+      // Une fois que les données sont récupérées, on les parcours
+      // pour rechercher les produits correspondants dans le panier
       if (productsCart) {
         datas.forEach((data) => {
-          // Récupération de l'ID dans le localStorage
+          // Vérifie si le produit est présent dans le panier
           const product = productsCart.find(
             (productCart) => productCart.id === data._id
           );
-          // Push de l'ID du localStorage dans les données de l'API
-          // Si présence d'un produit dans le localStorage
+          // Si le produit est trouvé, on l'ajoute à la liste des produits
+          // de l'API en incluant le prix récupéré à partir des données de l'API
           if (product) {
             apiProducts.push({ ...product, price: data.price });
           }
         });
-        // Refresh du dom lors de la suppression d'un produit ou de sa modification
+
+        // Rafraîchissement de l'affichage de la page pour afficher les nouveaux produits
         refreshDOM();
+        // Mise à jour les totaux affichés sur la page
         updateTotalsDOM();
       }
     })
     .catch((error) => {
+      // Si une erreur se produit lors de la récupération des données de l'API, affiche une alerte
       alert("Problème avec fetch 1 : " + error.message);
     });
 };

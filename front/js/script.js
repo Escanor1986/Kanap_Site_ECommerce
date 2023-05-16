@@ -1,4 +1,4 @@
-// // Script de la "progress bar" au niveau de la page d'accueil
+// Script de la "progress bar" au niveau de la page d'accueil
 // const loading = document
 //   .querySelectorAll('[data-component="progress-bar"]')
 //   .forEach((element) => {
