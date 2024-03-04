@@ -8,9 +8,9 @@ let product;
 // Call API per product ID
 const fetchProduct = async () => {
   await fetch(url)
-    .then((response) => response.json())
-    .then((data) => (product = data))
-    .catch((error) => {
+    .then(response => response.json())
+    .then(data => (product = data))
+    .catch(error => {
       alert("Problème avec fetch : " + error.message);
     });
 };

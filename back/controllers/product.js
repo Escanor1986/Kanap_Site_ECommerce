@@ -1,92 +1,77 @@
-const uuid = require('uuid/v1');
-const Product = require('../models/Product');
+const uuid = require("uuid").v1;
+const Product = require("../models/Product");
 
-exports.getAllProducts = (req, res, next) => {
-  Product.find().then(
-    (products) => {
-      const mappedProducts = products.map((product) => {
-        product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-        return product;
-      });
-      res.status(200).json(mappedProducts);
-    }
-  ).catch(
-    () => {
-      res.status(500).send(new Error('Database error!'));
-    }
-  );
-};
+// Fonction pour préfixer l'URL de l'image
+const constructImageUrl = (req, imageUrl) =>
+  `${req.protocol}://${req.get("host")}/images/${imageUrl}`;
 
-exports.getOneProduct = (req, res, next) => {
-  Product.findById(req.params.id).then(
-    (product) => {
-      if (!product) {
-        return res.status(404).send(new Error('Product not found!'));
-      }
-      product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-      res.status(200).json(product);
-    }
-  ).catch(
-    () => {
-      res.status(500).send(new Error('Database error!'));
-    }
-  )
-};
-
-/**
- *
- * Expects request to contain:
- * contact: {
- *   firstName: string,
- *   lastName: string,
- *   address: string,
- *   city: string,
- *   email: string
- * }
- * products: [string] <-- array of product _id
- *
- */
-exports.orderProducts = (req, res, next) => {
-  if (!req.body.contact ||
-      !req.body.contact.firstName ||
-      !req.body.contact.lastName ||
-      !req.body.contact.address ||
-      !req.body.contact.city ||
-      !req.body.contact.email ||
-      !req.body.products) {
-    return res.status(400).send(new Error('Bad request!'));
+// Récupérer tous les produits
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find({}, "name price imageUrl"); // Ne récupérer que les champs nécessaires
+    const mappedProducts = products.map(product => ({
+      ...product._doc, //  ._doc pour accéder aux propriétés réelles de l'objet.
+      imageUrl: constructImageUrl(req, product.imageUrl),
+    }));
+    res.status(200).json(mappedProducts);
+  } catch (error) {
+    res.status(500).json({ message: "Database error!", error: error.message });
   }
-  let queries = [];
-  for (let productId of req.body.products) {
-    const queryPromise = new Promise((resolve, reject) => {
-      Product.findById(productId).then(
-        (product) => {
-          if (!product) {
-            reject('Product not found: ' + productId);
-          }
-          product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-          resolve(product);
-        }
-      ).catch(
-        () => {
-          reject('Database error!');
-        }
+};
+
+// Récupérer un seul produit
+exports.getOneProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Product.findById(
+      id,
+      "name price imageUrl description"
+    ); // Limiter les champs retournés
+    if (!product) {
+      return res.status(404).json({ message: "Product not found!" });
+    }
+    product.imageUrl = constructImageUrl(req, product.imageUrl);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: "Database error!", error: error.message });
+  }
+};
+
+// Gestion de la validation de la commande par formulaire
+exports.orderProducts = async (req, res) => {
+  const { contact, products } = req.body;
+
+  if (
+    !contact ||
+    Object.values(contact).some(val => !val) ||
+    !products ||
+    !Array.isArray(products)
+  ) {
+    return res.status(400).json({ message: "Bad request!" });
+  }
+
+  try {
+    const productDetails = await Promise.all(
+      products.map(productId =>
+        Product.findById(productId, "name price imageUrl")
       )
-    });
-    queries.push(queryPromise);
+    );
+
+    const missingProducts = productDetails.filter(product => !product);
+    if (missingProducts.length > 0) {
+      return res
+        .status(404)
+        .json({ message: "One or more products not found!", missingProducts });
+    }
+
+    const updatedProducts = productDetails.map(product => ({
+      ...product._doc,
+      imageUrl: constructImageUrl(req, product.imageUrl),
+    }));
+
+    const orderId = uuid();
+    res.status(201).json({ contact, products: updatedProducts, orderId });
+  } catch (error) {
+    res.status(500).json({ message: "Database error!", error: error.message });
   }
-  Promise.all(queries).then(
-    (products) => {
-      const orderId = uuid();
-      return res.status(201).json({
-        contact: req.body.contact,
-        products: products,
-        orderId: orderId
-      })
-    }
-  ).catch(
-    (error) => {
-      return res.status(500).json(new Error(error));
-    }
-  );
 };
