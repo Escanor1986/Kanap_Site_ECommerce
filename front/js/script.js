@@ -1,20 +1,15 @@
 const showLoader = () => {
-  const loader = document.getElementById("loader");
-  loader.style.display = "block";
+  document.getElementById("loader").style.display = "block";
 };
 
 const hideLoader = () => {
-  const loader = document.getElementById("loader");
-  loader.style.display = "none";
+  document.getElementById("loader").style.display = "none";
 };
 
-// URL de destination pour "fetch"
 const urlGetFetch = "http://localhost:3000/api/products/";
 
-// tableau vide pour y "stocker" les différents produits
 let allProduct = [];
 
-// fonction fetch pour appeler l'API
 const getProducts = async () => {
   showLoader(); // Afficher le loader
 
