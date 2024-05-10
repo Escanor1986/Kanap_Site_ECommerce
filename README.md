@@ -31,7 +31,6 @@ Ce projet est un site de commerce électronique de vente en ligne de canapés. I
 ```bash
 git clone https://github.com/Escanor1986/Kanap_Site_ECommerce
 ```
-````
 
 2. Accédez au répertoire du projet :
 
@@ -89,3 +88,4 @@ Escanor1986
 ## Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+````
