@@ -1,13 +1,3 @@
-// Script de la "progress bar" au niveau de la page d'accueil
-// const loading = document
-//   .querySelectorAll('[data-component="progress-bar"]')
-//   .forEach((element) => {
-//     let p1 = new ProgressBar(element);
-//     setInterval(() => {
-//       p1.changeProgress(p1.progressValue + 10);
-//     }, 250);
-//   });
-
 const showLoader = () => {
   const loader = document.getElementById("loader");
   loader.style.display = "block";
@@ -29,9 +19,9 @@ const getProducts = async () => {
   showLoader(); // Afficher le loader
 
   await fetch(urlGetFetch) // url d'où sont appelées les données (product.js)
-    .then((response) => response.json())
-    .then((data) => (allProduct = data))
-    .catch((error) => {
+    .then(response => response.json())
+    .then(data => (allProduct = data))
+    .catch(error => {
       alert("Problème avec fetch : " + error.message);
     })
     .finally(() => {
@@ -39,46 +29,30 @@ const getProducts = async () => {
     });
 };
 
-// fonction asynchrone qui attend et restitue les données demandées à l'API
 const displayKanap = async () => {
   await getProducts();
 
   // Tri croissant du tableau de produit par prix
   allProduct.sort((c, d) => c.price - d.price);
-  // on itère sur le tableau avec la boucle map pour insertion dynamique dans le DOM
-  allProduct.map((product) => {
-    // Création & implémentation dans le DOM du tag "link" du produit récupéré de l'API
-    const link = document.createElement("a");
-    document.getElementById("items").appendChild(link);
-    link.setAttribute("href", "./product.html?id=" + product._id);
 
-    // Création & implémentation dans le DOM du tag "article" du produit récupéré de l'API
-    const article = document.createElement("article");
-    document.getElementById("items").appendChild(article);
-    link.prepend(article);
+  const itemsContainer = document.getElementById("items");
 
-    // Création & implémentation dans le DOM du tag "p" du produit récupéré de l'API
-    const paragraphe = document.createElement("p");
-    document.getElementById("items").appendChild(paragraphe);
-    paragraphe.classList.add("productDescription");
-    paragraphe.innerText = product.description;
-    article.prepend(paragraphe);
+  // Création du HTML pour chaque produit et ajout au DOM
+  const productsHTML = allProduct
+    .map(
+      product => `
+    <a href="./product.html?id=${product._id}">
+      <article>
+        <img src="${product.imageUrl}" alt="${product.altTxt}">
+        <h3 class="productName">${product.name}</h3>
+        <p class="productDescription">${product.description}</p>
+      </article>
+    </a>
+  `
+    )
+    .join(""); // Convertit le tableau en une chaîne de caractères
 
-    // Création & implémentation dans le DOM du tag "h3"" du produit récupéré de l'API
-    const name = document.createElement("h3");
-    document.getElementById("items").appendChild(name);
-    name.classList.add("productName");
-    name.innerText = product.name;
-    article.prepend(name);
-
-    // Création & implémentation dans le DOM du tag "img"" du produit récupéré de l'API
-    const image = document.createElement("img");
-    image.setAttribute("src", product.imageUrl);
-    image.setAttribute("alt", product.altTxt);
-    document.getElementById("items").appendChild(image);
-    article.prepend(image);
-  });
+  itemsContainer.innerHTML = productsHTML;
 };
 
-// Appel de la fonction pour affichage des produits sur la page
 displayKanap();
