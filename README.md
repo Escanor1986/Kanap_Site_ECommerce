@@ -20,7 +20,7 @@ Ce projet est un site de commerce électronique de vente en ligne de canapés. I
 
 ### Frontend
 
-- JavaScript (ou un framework comme React, Angular, ou Vue.js)
+- JavaScript
 - HTML
 - CSS (ou un préprocesseur comme Sass ou Less)
 
