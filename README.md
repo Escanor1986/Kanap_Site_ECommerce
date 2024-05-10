@@ -1,4 +1,4 @@
-````markdown
+```markdown
 # E-Commerce Kanap
 
 Ce projet est un site de commerce électronique de vente en ligne de canapés. Il comprend à la fois une partie backend développée avec Node.js et Express, ainsi qu'une partie frontend réalisée en JavaScript, CSS et HTML.
@@ -27,6 +27,7 @@ Ce projet est un site de commerce électronique de vente en ligne de canapés. I
 ## Installation
 
 1. Clonez le référentiel sur votre machine locale :
+```
 
 ```bash
 git clone https://github.com/Escanor1986/Kanap_Site_ECommerce
@@ -88,4 +89,7 @@ Escanor1986
 ## Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-````
+
+```
+
+```
