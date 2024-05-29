@@ -6,7 +6,7 @@ const hideLoader = () => {
   document.getElementById("loader").style.display = "none";
 };
 
-const urlGetFetch = "http://localhost:3000/api/products/";
+const urlGetFetch = "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/";
 
 let allProduct = [];
 
