@@ -23,12 +23,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./P5_Kanap/front
+        working-directory: ./front
 
       - name: Copy files to dist
         run: |
           mkdir -p dist
-          cp -r ./P5_Kanap/front/html/* dist/
+          cp -r ./front/html/* dist/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
