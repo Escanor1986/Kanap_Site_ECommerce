@@ -13,22 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: List directory contents
-        run: ls -R
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' 
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./front
+        working-directory: P5_Kanap/front
 
       - name: Copy files to dist
         run: |
           mkdir -p dist
-          cp -r ./front/html/* dist/
+          cp -r P5_Kanap/front/html/* dist/
+          cp -r P5_Kanap/front/css dist/css
+          cp -r P5_Kanap/front/images dist/images
+          cp -r P5_Kanap/front/js dist/js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
