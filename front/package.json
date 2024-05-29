@@ -1,4 +1,13 @@
 {
+  "name": "kanap",
+  "version": "1.0.0",
+  "description": "e-commerce",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "escanor1986",
+  "license": "MIT",
   "dependencies": {
     "rxjs": "^7.8.0"
   }
