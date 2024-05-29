@@ -1,0 +1,362 @@
+/*********/
+/*GENERAL*/
+/*********/
+
+body {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  color: white;
+  min-width: 300px;
+}
+h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-top: 135px;
+  text-align: center;
+}
+h2 {
+  font-weight: 400;
+  margin-bottom: 60px;
+  text-align: center;
+}
+.logo {
+  height: 100px;
+}
+
+/*maxwidth + centering*/
+.limitedWidthBlockContainer {
+  display: flex;
+  justify-content: center;
+}
+.limitedWidthBlock {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 25px;
+}
+
+/*Colors*/
+:root {
+  --main-color: #3498db;
+  --secondary-color: #2c3e50;
+  --text-color: #3d4c68;
+  --footer-text-color: #a6b0b3;
+  --footer-main-color: #3d424f;
+  --footer-secondary-color: #2d2f3e;
+  --basic: #3498db;
+  --basic-font: white;
+  --basic-light: #63a7d4;
+  --error: #b71c1c;
+  --error-font: white;
+  --error-light: #af4242;
+  /*background-color: var(--main-color);*/
+}
+
+/********/
+/*loader*/
+/********/
+
+#loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none; /* Cacher le loader par défaut */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/********/
+/*Progress Bar*/
+/********/
+
+/* .loaderContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  background-color: var(--basic);
+  position: fixed;
+}
+
+.progressBar {
+  -webkit-box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
+  -moz-box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
+  box-shadow: 11px 10px 88px 28px rgba(48, 48, 48, 0.86);
+  width: 50%;
+  border: 1px solid var(--main-color);
+  border-radius: 25px;
+  padding: 7px;
+  background-color: #303030;
+  height: 25px;
+}
+
+.progress {
+  height: 100%;
+  border-radius: 25px;
+  animation: move 2s linear infinite;
+}
+
+.progress.basic {
+  background-color: var(--basic);
+}
+
+.progress.error {
+  background-color: var(--error);
+}
+
+.progress.basic.striped {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--basic) 25%,
+    var(--basic-light) 50%,
+    var(--basic) 75%,
+    var(--basic-light) 100%
+  );
+  background-size: 50px 50px;
+}
+
+.progress.error.striped {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--error) 25%,
+    var(--error-light) 50%,
+    var(--error) 75%,
+    var(--error-light) 100%
+  );
+  background-size: 50px 50px;
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 0;
+  }
+} */
+
+/********/
+/*Header*/
+/********/
+
+/*informations*/
+.informations {
+  font-size: 13px;
+  background-color: var(--main-color);
+}
+.informations img {
+  height: 17px;
+}
+.informations ul {
+  display: flex;
+  padding-left: 0;
+}
+.informations ul li {
+  display: flex;
+  list-style: none;
+  margin-right: 36px;
+}
+.informations__phone,
+.informations__mail {
+  margin-right: 10px;
+}
+
+/*menu*/
+.menu {
+  background-color: white;
+}
+.menu .limitedWidthBlock {
+  display: flex;
+  justify-content: space-between;
+}
+.menu a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.menu nav {
+  display: flex;
+}
+.menu nav ul {
+  display: flex;
+  margin: 0;
+  line-height: 130px;
+}
+.menu nav ul li {
+  list-style: none;
+  margin-left: 50px;
+  color: var(--text-color);
+}
+.menu nav ul li:hover {
+  font-weight: 600;
+  color: #3498db !important;
+}
+
+/*banniere*/
+.banniere {
+  width: 100%;
+  height: 550px;
+  object-fit: cover;
+  display: flex;
+}
+
+/******/
+/*Main*/
+/******/
+
+main {
+  background-color: var(--main-color);
+}
+
+/*items*/
+.items {
+  margin-bottom: 135px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.items a {
+  width: 21%;
+  text-decoration: none;
+  color: unset;
+}
+.items a:hover article {
+  box-shadow: rgba(42, 18, 206, 0.9) 0 0 22px 6px;
+}
+.items article {
+  background-color: var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-top: 25px;
+  width: 100%;
+  border-radius: 10px;
+}
+.items article img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.items article h3 {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+.items article p {
+  text-align: center;
+  padding-left: 23px;
+  padding-right: 23px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+/********/
+/*Footer*/
+/********/
+
+footer {
+  color: var(--footer-text-color);
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+footer .footerMain,
+footer .footerSecondary {
+  width: 100%;
+}
+
+/*footerMain*/
+.footerMain {
+  background-color: var(--footer-main-color);
+  padding: 50px 0;
+}
+.footerMain .limitedWidthBlock {
+  display: flex;
+  justify-content: space-between;
+}
+.footerMain .limitedWidthBlock div {
+  display: flex;
+  align-items: center;
+}
+
+/*footerSecondary*/
+.footerSecondary {
+  background-color: var(--footer-secondary-color);
+  padding: 25px 0;
+}
+
+/***************/
+/*Media queries*/
+/***************/
+
+@media (max-width: 991.98px) {
+  .informations ul {
+    display: flex;
+    justify-content: space-around;
+  }
+  .items a {
+    width: 42%;
+  }
+  .footerMain .limitedWidthBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .footerSecondary .limitedWidthBlock p {
+    text-align: center;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .informations ul {
+    flex-direction: column;
+    align-items: center;
+  }
+  .informations ul li {
+    margin-bottom: 14px;
+    margin-right: 0;
+  }
+  .menu .limitedWidthBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo {
+    margin-top: 20px;
+  }
+  .menu nav ul {
+    padding: 0;
+    line-height: 80px;
+  }
+  .menu nav ul a:first-child li {
+    margin-left: 0;
+  }
+  .items a {
+    width: 75%;
+  }
+}
