@@ -5,7 +5,7 @@ let cartContent = document.getElementById("cart__items");
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
-const urlGet = "http://localhost:3000/api/products/";
+const urlGet = "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/";
 
 const getProducts = async () => {
   await fetch(urlGet)
@@ -316,7 +316,7 @@ function postForm() {
       };
 
       const response = await fetch(
-        "http://localhost:3000/api/products/order",
+        "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/order",
         options
       )
         .then(response => {
