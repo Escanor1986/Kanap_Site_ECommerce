@@ -6,7 +6,7 @@ const hideLoader = () => {
   document.getElementById("loader").style.display = "none";
 };
 
-const urlGetFetch = "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/";
+const urlGetFetch = "https://kanaplion-ea9afe828162.herokuapp.com/api/products/";
 
 let allProduct = [];
 
