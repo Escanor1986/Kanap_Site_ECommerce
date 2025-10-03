@@ -5,7 +5,7 @@ let cartContent = document.getElementById("cart__items");
 let totalPriceValue = document.querySelector("#totalPrice");
 let totalQuantityCart = document.querySelector("#totalQuantity");
 
-const urlGet = "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/";
+const urlGet = "https://kanaplion-ea9afe828162.herokuapp.com/api/products/";
 
 const getProducts = async () => {
   await fetch(urlGet)
@@ -316,7 +316,7 @@ function postForm() {
       };
 
       const response = await fetch(
-        "https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/order",
+        "https://kanaplion-ea9afe828162.herokuapp.com/api/products/order",
         options
       )
         .then(response => {
