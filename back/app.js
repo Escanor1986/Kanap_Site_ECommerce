@@ -26,7 +26,8 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: ["http://127.0.0.1:5500", "http://localhost:5500"], // Add other origins as needed
+  origin: ["http://127.0.0.1:5500", "http://localhost:5500", "
+    "https://escanor1986.github.io", "https://escanor1986.github.io/Kanap_Site_ECommerce/"], // Add other origins as needed
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
