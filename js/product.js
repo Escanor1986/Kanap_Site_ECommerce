@@ -1,6 +1,6 @@
 let parametres = new URL(document.location).searchParams;
 let id = parametres.get("id");
-const url = `https://floating-reef-09215-bc528b28005b.herokuapp.com/api/products/${id}`;
+const url = `https://kanaplion-ea9afe828162.herokuapp.com/api/products/${id}`;
 console.log(url.toString());
 console.log(document.location); // retourne la chaîne de caractère dans la barre d'adresse/requête
 let product;
